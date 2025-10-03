@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # Override web service for development
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      - DJANGO_ENV=development
+      - DEBUG=True
+      - SECRET_KEY=dev-secret-key-not-for-production
+    volumes:
+      - .:/app
+      - /app/staticfiles
+      - /app/media
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
+
+  # Override database for development
+  db:
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: cvproject_dev
+      POSTGRES_USER: cvproject_user
+      POSTGRES_PASSWORD: cvproject_password
+
+  # Override Redis for development
+  redis:
+    ports:
+      - "6379:6379"
+
+  # Remove nginx for development
+  nginx:
+    profiles:
+      - production
