@@ -109,9 +109,14 @@
                             <span class="badge bg-primary">
                                 <i class="fas fa-eye me-1"></i>Published
                             </span>
-                            <a href="{% url 'main:cv_detail' cv.id %}" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-eye me-1"></i>View Details
-                            </a>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'main:cv_detail' cv.id %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                                <a href="{% url 'main:cv_pdf_download' cv.id %}" class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-file-pdf me-1"></i>PDF
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

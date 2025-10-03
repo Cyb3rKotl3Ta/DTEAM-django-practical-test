@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, Http404
 from django.db.models import Prefetch, Count
 from .models import CV, Skill, Project, Contact
+from .services.pdf_service import PDFService
 
 
 def home_view(request):
@@ -59,3 +60,31 @@ def cv_detail_view(request, cv_id):
         'total_contacts': cv.contacts.filter(is_public=True).count()
     }
     return render(request, 'main/cv_detail.html', context)
+
+
+def cv_pdf_download_view(request, cv_id):
+    cv = get_object_or_404(
+        CV.objects.published().select_related().prefetch_related(
+            Prefetch('skills', queryset=Skill.objects.select_related()),
+            Prefetch('projects', queryset=Project.objects.select_related()),
+            Prefetch('contacts', queryset=Contact.objects.filter(is_public=True))
+        ),
+        id=cv_id
+    )
+
+    pdf_service = PDFService()
+    return pdf_service.generate_cv_pdf(cv)
+
+
+def cv_pdf_view_view(request, cv_id):
+    cv = get_object_or_404(
+        CV.objects.published().select_related().prefetch_related(
+            Prefetch('skills', queryset=Skill.objects.select_related()),
+            Prefetch('projects', queryset=Project.objects.select_related()),
+            Prefetch('contacts', queryset=Contact.objects.filter(is_public=True))
+        ),
+        id=cv_id
+    )
+
+    pdf_service = PDFService()
+    return pdf_service.generate_cv_pdf_inline(cv)
