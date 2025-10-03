@@ -35,13 +35,15 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'main',  # Will be created later
+    'main',
+    'audit',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'audit.middleware.RequestLoggingMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -181,3 +183,16 @@ REST_FRAMEWORK = {
     'SEARCH_PARAM': 'search',
     'ORDERING_PARAM': 'ordering',
 }
+
+# Request Logging Middleware Settings
+REQUEST_LOG_EXCLUDED_PATHS = [
+    '/admin/jsi18n/',
+    '/static/',
+    '/media/',
+    '/favicon.ico',
+    '/__debug__/',
+]
+
+REQUEST_LOG_EXCLUDED_METHODS = ['OPTIONS']
+
+REQUEST_LOG_AUTHENTICATED_ONLY = False
