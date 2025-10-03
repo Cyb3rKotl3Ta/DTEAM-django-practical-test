@@ -8,6 +8,7 @@ urlpatterns = [
     path('cv/<int:cv_id>/', views.cv_detail_view, name='cv_detail'),
     path('cv/<int:cv_id>/pdf/', views.cv_pdf_view_view, name='cv_pdf_view'),
     path('cv/<int:cv_id>/pdf/download/', views.cv_pdf_download_view, name='cv_pdf_download'),
+    path('settings/', views.SettingsView.as_view(), name='settings'),
     path('api/', include('main.api.urls')),
     path('api/legacy/', views.home_view, name='api_home'),
 ]

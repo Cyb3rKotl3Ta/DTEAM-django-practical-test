@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load settings_extras %}
+
+{% block title %}Django Settings - CV Project{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .settings-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid #007bff;
+    }
+    .settings-item {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 10px;
+        transition: all 0.2s ease-in-out;
+    }
+    .settings-item:hover {
+        border-color: #007bff;
+        box-shadow: 0 2px 8px rgba(0,123,255,0.1);
+    }
+    .settings-key {
+        font-weight: bold;
+        color: #495057;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+    }
+    .settings-value {
+        color: #6c757d;
+        font-family: 'Courier New', monospace;
+        font-size: 0.85rem;
+        word-break: break-all;
+        margin-top: 5px;
+    }
+    .settings-type {
+        font-size: 0.75rem;
+        color: #6c757d;
+        font-style: italic;
+    }
+    .settings-badge {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 3px;
+    }
+    .boolean-true {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .boolean-false {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    .string-value {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+    .number-value {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    .list-value {
+        background-color: #e2e3e5;
+        color: #383d41;
+    }
+    .environment-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .permission-badge {
+        font-size: 0.7rem;
+        margin: 2px;
+    }
+    .collapsible {
+        cursor: pointer;
+        user-select: none;
+    }
+    .collapsible:hover {
+        background-color: #e9ecef;
+    }
+    .collapsible-content {
+        display: none;
+        padding-top: 10px;
+    }
+    .collapsible.active .collapsible-content {
+        display: block;
+    }
+    .collapsible::before {
+        content: '▶';
+        display: inline-block;
+        margin-right: 8px;
+        transition: transform 0.2s ease;
+    }
+    .collapsible.active::before {
+        transform: rotate(90deg);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-cogs me-2"></i>Django Settings
+                </h1>
+                <div class="text-muted">
+                    <small>Settings injected via context processor</small>
+                </div>
+            </div>
+
+            <!-- Environment Information -->
+            <div class="environment-card">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="mb-3">
+                            <i class="fas fa-user me-2"></i>Current User
+                        </h5>
+                        <p class="mb-1"><strong>Username:</strong> {{ environment_info.user.username }}</p>
+                        <p class="mb-1"><strong>Email:</strong> {{ environment_info.user.email }}</p>
+                        <p class="mb-1">
+                            <strong>Status:</strong>
+                            {% if environment_info.is_superuser %}
+                                <span class="badge bg-danger">Superuser</span>
+                            {% elif environment_info.is_staff %}
+                                <span class="badge bg-warning">Staff</span>
+                            {% else %}
+                                <span class="badge bg-info">Regular User</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-3">
+                            <i class="fas fa-server me-2"></i>System Info
+                        </h5>
+                        <p class="mb-1"><strong>Python:</strong> {{ settings.PYTHON_VERSION }}</p>
+                        <p class="mb-1"><strong>Django:</strong> {{ settings.DJANGO_VERSION }}</p>
+                        <p class="mb-1"><strong>Environment:</strong> {{ settings.DJANGO_ENV|title }}</p>
+                        <p class="mb-1"><strong>Debug Mode:</strong> 
+                            {% if settings.DEBUG %}
+                                <span class="badge bg-warning">ON</span>
+                            {% else %}
+                                <span class="badge bg-success">OFF</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Categories -->
+            {% for category, setting_keys in settings_categories.items %}
+            <div class="settings-section">
+                <h4 class="collapsible" onclick="toggleCollapsible(this)">
+                    <i class="fas fa-folder me-2"></i>{{ category }}
+                    <span class="badge bg-secondary ms-2">{{ setting_keys|length }}</span>
+                </h4>
+                <div class="collapsible-content">
+                    {% for key in setting_keys %}
+                        {% if settings|lookup:key %}
+                        <div class="settings-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="settings-key">{{ key }}</div>
+                                    <div class="settings-value">
+                                        {% with value=settings|lookup:key %}
+                                            {% if value|length > 100 %}
+                                                {{ value|truncatechars:100 }}
+                                                <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleFullValue(this)">
+                                                    Show Full
+                                                </button>
+                                                <div class="full-value" style="display: none;">{{ value }}</div>
+                                            {% else %}
+                                                {{ value }}
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                    <div class="settings-type">
+                                        {% with value=settings|lookup:key %}
+                                            {% if value is True %}
+                                                <span class="badge settings-badge boolean-true">Boolean: True</span>
+                                            {% elif value is False %}
+                                                <span class="badge settings-badge boolean-false">Boolean: False</span>
+                                            {% elif value|length > 1 and value.0 == '[' %}
+                                                <span class="badge settings-badge list-value">List</span>
+                                            {% elif value|length > 1 and value.0 == '{' %}
+                                                <span class="badge settings-badge list-value">Dictionary</span>
+                                            {% elif value|add:0 == value and value != '' %}
+                                                <span class="badge settings-badge number-value">Number</span>
+                                            {% else %}
+                                                <span class="badge settings-badge string-value">String</span>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- User Permissions -->
+            {% if environment_info.user_permissions %}
+            <div class="settings-section">
+                <h4 class="collapsible" onclick="toggleCollapsible(this)">
+                    <i class="fas fa-key me-2"></i>User Permissions
+                    <span class="badge bg-secondary ms-2">{{ environment_info.user_permissions|length }}</span>
+                </h4>
+                <div class="collapsible-content">
+                    <div class="settings-item">
+                        <div class="d-flex flex-wrap">
+                            {% for permission in environment_info.user_permissions %}
+                                <span class="badge bg-primary permission-badge">{{ permission }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- User Groups -->
+            {% if environment_info.user_groups %}
+            <div class="settings-section">
+                <h4 class="collapsible" onclick="toggleCollapsible(this)">
+                    <i class="fas fa-users me-2"></i>User Groups
+                    <span class="badge bg-secondary ms-2">{{ environment_info.user_groups|length }}</span>
+                </h4>
+                <div class="collapsible-content">
+                    <div class="settings-item">
+                        <div class="d-flex flex-wrap">
+                            {% for group in environment_info.user_groups %}
+                                <span class="badge bg-info permission-badge">{{ group }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Context Processor Info -->
+            <div class="settings-section">
+                <h4>
+                    <i class="fas fa-info-circle me-2"></i>Context Processor Information
+                </h4>
+                <div class="settings-item">
+                    <p class="mb-2">
+                        <strong>Context Processor:</strong> <code>main.context_processors.settings_context</code>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Available in all templates:</strong> <code>{{ settings }}</code>
+                    </p>
+                    <p class="mb-0">
+                        <strong>Total Settings Exposed:</strong> 
+                        <span class="badge bg-success">{{ settings|length }} settings</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function toggleCollapsible(element) {
+        element.classList.toggle('active');
+    }
+    
+    function toggleFullValue(button) {
+        const fullValue = button.nextElementSibling;
+        if (fullValue.style.display === 'none') {
+            fullValue.style.display = 'block';
+            button.textContent = 'Hide Full';
+        } else {
+            fullValue.style.display = 'none';
+            button.textContent = 'Show Full';
+        }
+    }
+    
+    // Auto-expand first section
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstCollapsible = document.querySelector('.collapsible');
+        if (firstCollapsible) {
+            firstCollapsible.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}
