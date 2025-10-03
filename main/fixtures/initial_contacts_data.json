@@ -1,0 +1,171 @@
+[
+  {
+    "model": "main.contact",
+    "pk": 1,
+    "fields": {
+      "cv": 1,
+      "contact_type": "email",
+      "value": "john.doe@example.com",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-15T10:15:00Z",
+      "updated_at": "2024-01-15T10:15:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 2,
+    "fields": {
+      "cv": 1,
+      "contact_type": "phone",
+      "value": "+1-555-0123",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-15T10:16:00Z",
+      "updated_at": "2024-01-15T10:16:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 3,
+    "fields": {
+      "cv": 1,
+      "contact_type": "linkedin",
+      "value": "https://linkedin.com/in/johndoe",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-15T10:17:00Z",
+      "updated_at": "2024-01-15T10:17:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 4,
+    "fields": {
+      "cv": 1,
+      "contact_type": "github",
+      "value": "https://github.com/johndoe",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-15T10:18:00Z",
+      "updated_at": "2024-01-15T10:18:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 5,
+    "fields": {
+      "cv": 1,
+      "contact_type": "website",
+      "value": "https://johndoe.dev",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-15T10:19:00Z",
+      "updated_at": "2024-01-15T10:19:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 6,
+    "fields": {
+      "cv": 2,
+      "contact_type": "email",
+      "value": "jane.smith@example.com",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-16T09:45:00Z",
+      "updated_at": "2024-01-16T09:45:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 7,
+    "fields": {
+      "cv": 2,
+      "contact_type": "phone",
+      "value": "+1-555-0456",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-16T09:46:00Z",
+      "updated_at": "2024-01-16T09:46:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 8,
+    "fields": {
+      "cv": 2,
+      "contact_type": "linkedin",
+      "value": "https://linkedin.com/in/janesmith",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-16T09:47:00Z",
+      "updated_at": "2024-01-16T09:47:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 9,
+    "fields": {
+      "cv": 2,
+      "contact_type": "github",
+      "value": "https://github.com/janesmith",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-16T09:48:00Z",
+      "updated_at": "2024-01-16T09:48:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 10,
+    "fields": {
+      "cv": 3,
+      "contact_type": "email",
+      "value": "alex.johnson@example.com",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-17T14:35:00Z",
+      "updated_at": "2024-01-17T14:35:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 11,
+    "fields": {
+      "cv": 3,
+      "contact_type": "phone",
+      "value": "+1-555-0789",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-17T14:36:00Z",
+      "updated_at": "2024-01-17T14:36:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 12,
+    "fields": {
+      "cv": 3,
+      "contact_type": "linkedin",
+      "value": "https://linkedin.com/in/alexjohnson",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-17T14:37:00Z",
+      "updated_at": "2024-01-17T14:37:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 13,
+    "fields": {
+      "cv": 3,
+      "contact_type": "github",
+      "value": "https://github.com/alexjohnson",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-17T14:38:00Z",
+      "updated_at": "2024-01-17T14:38:00Z"
+    }
+  }
+]

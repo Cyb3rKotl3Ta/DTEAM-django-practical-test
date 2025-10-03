@@ -1,0 +1,121 @@
+[
+  {
+    "model": "main.project",
+    "pk": 1,
+    "fields": {
+      "cv": 1,
+      "title": "E-commerce Platform",
+      "description": "Full-stack e-commerce platform built with Django REST API and React frontend. Features include user authentication, product catalog, shopping cart, payment integration, and admin dashboard.",
+      "status": "completed",
+      "start_date": "2023-01-01",
+      "end_date": "2023-06-30",
+      "technologies_used": "Django, React, PostgreSQL, Redis, Stripe API",
+      "project_url": "https://github.com/johndoe/ecommerce-platform",
+      "is_featured": true,
+      "created_at": "2024-01-15T10:10:00Z",
+      "updated_at": "2024-01-15T10:10:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 2,
+    "fields": {
+      "cv": 1,
+      "title": "Task Management System",
+      "description": "Collaborative task management system with real-time updates, team collaboration features, and project tracking capabilities.",
+      "status": "completed",
+      "start_date": "2023-07-01",
+      "end_date": "2023-10-15",
+      "technologies_used": "Django, WebSockets, Celery, PostgreSQL",
+      "project_url": "https://github.com/johndoe/task-manager",
+      "is_featured": false,
+      "created_at": "2024-01-15T10:11:00Z",
+      "updated_at": "2024-01-15T10:11:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 3,
+    "fields": {
+      "cv": 1,
+      "title": "AI Chatbot Integration",
+      "description": "Integration of AI chatbot into existing customer support system using OpenAI API and natural language processing.",
+      "status": "in_progress",
+      "start_date": "2024-01-01",
+      "end_date": null,
+      "technologies_used": "Python, OpenAI API, Django, WebSockets",
+      "project_url": "https://github.com/johndoe/ai-chatbot",
+      "is_featured": true,
+      "created_at": "2024-01-15T10:12:00Z",
+      "updated_at": "2024-01-15T10:12:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 4,
+    "fields": {
+      "cv": 2,
+      "title": "Social Media Dashboard",
+      "description": "Real-time social media analytics dashboard with data visualization and reporting features.",
+      "status": "completed",
+      "start_date": "2023-03-01",
+      "end_date": "2023-08-30",
+      "technologies_used": "Node.js, React, MongoDB, Chart.js, Socket.io",
+      "project_url": "https://github.com/janesmith/social-dashboard",
+      "is_featured": true,
+      "created_at": "2024-01-16T09:40:00Z",
+      "updated_at": "2024-01-16T09:40:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 5,
+    "fields": {
+      "cv": 2,
+      "title": "Mobile App Backend",
+      "description": "RESTful API backend for mobile application with user management, content delivery, and push notifications.",
+      "status": "completed",
+      "start_date": "2023-09-01",
+      "end_date": "2023-12-15",
+      "technologies_used": "Node.js, Express, MongoDB, Firebase, JWT",
+      "project_url": "https://github.com/janesmith/mobile-backend",
+      "is_featured": false,
+      "created_at": "2024-01-16T09:41:00Z",
+      "updated_at": "2024-01-16T09:41:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 6,
+    "fields": {
+      "cv": 3,
+      "title": "Cloud Infrastructure Migration",
+      "description": "Migration of legacy applications to AWS cloud infrastructure with automated deployment pipelines.",
+      "status": "completed",
+      "start_date": "2023-02-01",
+      "end_date": "2023-07-31",
+      "technologies_used": "AWS, Terraform, Docker, Jenkins, Kubernetes",
+      "project_url": "https://github.com/alexjohnson/cloud-migration",
+      "is_featured": true,
+      "created_at": "2024-01-17T14:30:00Z",
+      "updated_at": "2024-01-17T14:30:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 7,
+    "fields": {
+      "cv": 3,
+      "title": "CI/CD Pipeline Automation",
+      "description": "Automated CI/CD pipeline setup for microservices architecture with testing, deployment, and monitoring.",
+      "status": "in_progress",
+      "start_date": "2024-01-01",
+      "end_date": null,
+      "technologies_used": "Jenkins, Docker, Kubernetes, Prometheus, Grafana",
+      "project_url": "https://github.com/alexjohnson/cicd-pipeline",
+      "is_featured": false,
+      "created_at": "2024-01-17T14:31:00Z",
+      "updated_at": "2024-01-17T14:31:00Z"
+    }
+  }
+]

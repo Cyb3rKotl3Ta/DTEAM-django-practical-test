@@ -1,0 +1,132 @@
+[
+  {
+    "model": "main.skill",
+    "pk": 1,
+    "fields": {
+      "cv": 1,
+      "name": "Python",
+      "category": "technical",
+      "proficiency_level": 5,
+      "description": "Expert level Python programming with experience in Django, Flask, and FastAPI",
+      "created_at": "2024-01-15T10:05:00Z",
+      "updated_at": "2024-01-15T10:05:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 2,
+    "fields": {
+      "cv": 1,
+      "name": "Django",
+      "category": "technical",
+      "proficiency_level": 4,
+      "description": "Advanced Django web development with REST API experience",
+      "created_at": "2024-01-15T10:06:00Z",
+      "updated_at": "2024-01-15T10:06:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 3,
+    "fields": {
+      "cv": 1,
+      "name": "React",
+      "category": "technical",
+      "proficiency_level": 4,
+      "description": "Frontend development with React and modern JavaScript",
+      "created_at": "2024-01-15T10:07:00Z",
+      "updated_at": "2024-01-15T10:07:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 4,
+    "fields": {
+      "cv": 1,
+      "name": "Team Leadership",
+      "category": "soft",
+      "proficiency_level": 4,
+      "description": "Leading development teams and mentoring junior developers",
+      "created_at": "2024-01-15T10:08:00Z",
+      "updated_at": "2024-01-15T10:08:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 5,
+    "fields": {
+      "cv": 1,
+      "name": "English",
+      "category": "language",
+      "proficiency_level": 5,
+      "description": "Fluent in English for technical communication",
+      "created_at": "2024-01-15T10:09:00Z",
+      "updated_at": "2024-01-15T10:09:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 6,
+    "fields": {
+      "cv": 2,
+      "name": "JavaScript",
+      "category": "technical",
+      "proficiency_level": 5,
+      "description": "Expert JavaScript developer with ES6+ and modern frameworks",
+      "created_at": "2024-01-16T09:35:00Z",
+      "updated_at": "2024-01-16T09:35:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 7,
+    "fields": {
+      "cv": 2,
+      "name": "Node.js",
+      "category": "technical",
+      "proficiency_level": 4,
+      "description": "Backend development with Node.js and Express",
+      "created_at": "2024-01-16T09:36:00Z",
+      "updated_at": "2024-01-16T09:36:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 8,
+    "fields": {
+      "cv": 3,
+      "name": "AWS",
+      "category": "technical",
+      "proficiency_level": 5,
+      "description": "Amazon Web Services cloud architecture and deployment",
+      "created_at": "2024-01-17T14:25:00Z",
+      "updated_at": "2024-01-17T14:25:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 9,
+    "fields": {
+      "cv": 3,
+      "name": "Docker",
+      "category": "technical",
+      "proficiency_level": 4,
+      "description": "Containerization and orchestration with Docker",
+      "created_at": "2024-01-17T14:26:00Z",
+      "updated_at": "2024-01-17T14:26:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 10,
+    "fields": {
+      "cv": 3,
+      "name": "Kubernetes",
+      "category": "technical",
+      "proficiency_level": 3,
+      "description": "Container orchestration and cluster management",
+      "created_at": "2024-01-17T14:27:00Z",
+      "updated_at": "2024-01-17T14:27:00Z"
+    }
+  }
+]

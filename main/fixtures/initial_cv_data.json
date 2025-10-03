@@ -1,0 +1,41 @@
+[
+  {
+    "model": "main.cv",
+    "pk": 1,
+    "fields": {
+      "first_name": "John",
+      "last_name": "Doe",
+      "bio": "Experienced software developer with 5+ years of experience in web development, specializing in Python, Django, and React. Passionate about creating scalable and maintainable applications.",
+      "status": "published",
+      "is_active": true,
+      "created_at": "2024-01-15T10:00:00Z",
+      "updated_at": "2024-01-15T10:00:00Z"
+    }
+  },
+  {
+    "model": "main.cv",
+    "pk": 2,
+    "fields": {
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "bio": "Full-stack developer with expertise in modern web technologies. Strong background in both frontend and backend development with focus on user experience and performance optimization.",
+      "status": "published",
+      "is_active": true,
+      "created_at": "2024-01-16T09:30:00Z",
+      "updated_at": "2024-01-16T09:30:00Z"
+    }
+  },
+  {
+    "model": "main.cv",
+    "pk": 3,
+    "fields": {
+      "first_name": "Alex",
+      "last_name": "Johnson",
+      "bio": "DevOps engineer and cloud architect with extensive experience in AWS, Docker, and Kubernetes. Passionate about automation and infrastructure as code.",
+      "status": "draft",
+      "is_active": true,
+      "created_at": "2024-01-17T14:20:00Z",
+      "updated_at": "2024-01-17T14:20:00Z"
+    }
+  }
+]
