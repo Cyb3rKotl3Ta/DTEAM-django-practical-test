@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}CV List - CV Project{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-users me-3"></i>Professional CVs
+        </h1>
+        <p class="lead mb-4">Discover talented professionals and their expertise</p>
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3 class="text-primary">{{ total_cvs }}</h3>
+                    <p class="mb-0">Total CVs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    {% if cvs %}
+        <div class="row">
+            {% for cv in cvs %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card cv-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-1">{{ cv.full_name }}</h5>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ cv.created_at|date:"M d, Y" }}
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <p class="card-text text-muted mb-3">
+                            {{ cv.bio|truncatewords:20 }}
+                        </p>
+                        
+                        <div class="mb-3">
+                            <h6 class="text-primary mb-2">
+                                <i class="fas fa-tools me-1"></i>Skills ({{ cv.skills_count }})
+                            </h6>
+                            <div class="d-flex flex-wrap">
+                                {% for skill in cv.skills.all|slice:":5" %}
+                                <span class="badge bg-secondary skill-badge me-1 mb-1">
+                                    {{ skill.name }}
+                                </span>
+                                {% endfor %}
+                                {% if cv.skills_count > 5 %}
+                                <span class="badge bg-light text-dark skill-badge">
+                                    +{{ cv.skills_count|add:"-5" }} more
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6 class="text-success mb-2">
+                                <i class="fas fa-project-diagram me-1"></i>Projects ({{ cv.projects_count }})
+                            </h6>
+                            {% for project in cv.projects.all|slice:":2" %}
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <small class="text-muted">{{ project.title }}</small>
+                                <span class="badge 
+                                    {% if project.status == 'completed' %}bg-success
+                                    {% elif project.status == 'in_progress' %}bg-warning
+                                    {% else %}bg-info{% endif %} project-status">
+                                    {{ project.get_status_display }}
+                                </span>
+                            </div>
+                            {% endfor %}
+                            {% if cv.projects_count > 2 %}
+                            <small class="text-muted">+{{ cv.projects_count|add:"-2" }} more projects</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6 class="text-info mb-2">
+                                <i class="fas fa-address-book me-1"></i>Contact
+                            </h6>
+                            <div class="d-flex flex-wrap">
+                                {% for contact in cv.contacts.all|slice:":3" %}
+                                <a href="{% if contact.contact_type == 'email' %}mailto:{{ contact.value }}{% elif contact.contact_type == 'phone' %}tel:{{ contact.value }}{% else %}{{ contact.value }}{% endif %}" 
+                                   class="text-decoration-none me-3 mb-1" target="_blank">
+                                    <i class="fas 
+                                        {% if contact.contact_type == 'email' %}fa-envelope
+                                        {% elif contact.contact_type == 'phone' %}fa-phone
+                                        {% elif contact.contact_type == 'linkedin' %}fa-linkedin
+                                        {% elif contact.contact_type == 'github' %}fa-github
+                                        {% elif contact.contact_type == 'website' %}fa-globe
+                                        {% else %}fa-link{% endif %} me-1"></i>
+                                    {{ contact.get_contact_type_display }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">
+                                <i class="fas fa-eye me-1"></i>Published
+                            </span>
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <h3 class="text-muted">No CVs Found</h3>
+            <p class="text-muted">There are no published CVs available at the moment.</p>
+            <a href="{% url 'main:api_home' %}" class="btn btn-primary">
+                <i class="fas fa-code me-1"></i>Check API
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
