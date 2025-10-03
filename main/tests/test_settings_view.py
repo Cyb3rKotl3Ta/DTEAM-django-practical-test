@@ -37,7 +37,7 @@ class SettingsViewTestCase(TestCase):
         """Test that authenticated users can access settings view."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Django Settings')
         self.assertContains(response, 'Settings injected via context processor')
@@ -46,27 +46,27 @@ class SettingsViewTestCase(TestCase):
         """Test that settings view provides correct context data."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         self.assertEqual(response.status_code, 200)
         self.assertIn('page_title', response.context)
         self.assertIn('settings_categories', response.context)
         self.assertIn('environment_info', response.context)
         self.assertIn('settings', response.context)
-        
+
         self.assertEqual(response.context['page_title'], 'Django Settings')
 
     def test_settings_view_categories_structure(self):
         """Test that settings categories are properly structured."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         categories = response.context['settings_categories']
-        
+
         expected_categories = [
             'Core Django', 'Database', 'Static & Media', 'Security',
             'Session & CSRF', 'Email', 'File Upload', 'Custom Project', 'System Info'
         ]
-        
+
         for category in expected_categories:
             self.assertIn(category, categories)
             self.assertIsInstance(categories[category], list)
@@ -76,15 +76,15 @@ class SettingsViewTestCase(TestCase):
         """Test that environment info is correctly provided."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         env_info = response.context['environment_info']
-        
+
         self.assertIn('user', env_info)
         self.assertIn('is_staff', env_info)
         self.assertIn('is_superuser', env_info)
         self.assertIn('user_permissions', env_info)
         self.assertIn('user_groups', env_info)
-        
+
         self.assertEqual(env_info['user'], self.user)
         self.assertFalse(env_info['is_staff'])
         self.assertFalse(env_info['is_superuser'])
@@ -95,9 +95,9 @@ class SettingsViewTestCase(TestCase):
         """Test environment info for staff user."""
         self.client.login(username='staffuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         env_info = response.context['environment_info']
-        
+
         self.assertEqual(env_info['user'], self.staff_user)
         self.assertTrue(env_info['is_staff'])
         self.assertFalse(env_info['is_superuser'])
@@ -106,9 +106,9 @@ class SettingsViewTestCase(TestCase):
         """Test environment info for superuser."""
         self.client.login(username='superuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         env_info = response.context['environment_info']
-        
+
         self.assertEqual(env_info['user'], self.superuser)
         self.assertTrue(env_info['is_staff'])
         self.assertTrue(env_info['is_superuser'])
@@ -117,17 +117,17 @@ class SettingsViewTestCase(TestCase):
         """Test that settings view template contains expected content."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         # Test page structure
         self.assertContains(response, 'Django Settings')
         self.assertContains(response, 'Current User')
         self.assertContains(response, 'System Info')
         self.assertContains(response, 'Context Processor Information')
-        
+
         # Test user information
         self.assertContains(response, self.user.username)
         self.assertContains(response, self.user.email)
-        
+
         # Test settings categories
         self.assertContains(response, 'Core Django')
         self.assertContains(response, 'Database')
@@ -138,7 +138,7 @@ class SettingsViewTestCase(TestCase):
         """Test that debug mode is properly displayed."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         # Should show debug status
         self.assertContains(response, 'Debug Mode')
         # The actual value depends on settings.DEBUG
@@ -147,7 +147,7 @@ class SettingsViewTestCase(TestCase):
         """Test that Python version is displayed."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         self.assertContains(response, 'Python:')
         # Should contain version number format like "3.11.7"
 
@@ -155,21 +155,21 @@ class SettingsViewTestCase(TestCase):
         """Test that Django version is displayed."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         self.assertContains(response, 'Django:')
 
     def test_settings_view_environment_display(self):
         """Test that environment is displayed."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         self.assertContains(response, 'Environment:')
 
     def test_settings_view_collapsible_sections(self):
         """Test that collapsible sections are present."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         # Should contain collapsible functionality
         self.assertContains(response, 'collapsible')
         self.assertContains(response, 'toggleCollapsible')
@@ -178,7 +178,7 @@ class SettingsViewTestCase(TestCase):
         """Test that context processor information is displayed."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         self.assertContains(response, 'Context Processor:')
         self.assertContains(response, 'main.context_processors.settings_context')
         self.assertContains(response, 'Available in all templates')
@@ -187,24 +187,24 @@ class SettingsViewTestCase(TestCase):
         """Test that settings count is displayed."""
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('main:settings'))
-        
+
         self.assertContains(response, 'Total Settings Exposed')
 
     def test_settings_view_methods(self):
         """Test that SettingsView methods work correctly."""
         view = SettingsView()
-        
+
         # Test _get_settings_categories
         categories = view._get_settings_categories()
         self.assertIsInstance(categories, dict)
         self.assertIn('Core Django', categories)
         self.assertIn('Database', categories)
-        
+
         # Test _get_environment_info (requires request)
         request = self.client.get('/').wsgi_request
         request.user = self.user
         view.request = request
-        
+
         env_info = view._get_environment_info()
         self.assertIsInstance(env_info, dict)
         self.assertIn('user', env_info)
@@ -220,7 +220,7 @@ class SettingsViewTestCase(TestCase):
         """Test that SettingsView inherits from correct classes."""
         from django.contrib.auth.mixins import LoginRequiredMixin
         from django.views.generic import TemplateView
-        
+
         self.assertTrue(issubclass(SettingsView, LoginRequiredMixin))
         self.assertTrue(issubclass(SettingsView, TemplateView))
 
@@ -231,14 +231,14 @@ class SettingsViewTestCase(TestCase):
             (self.staff_user, True, False),
             (self.superuser, True, True)
         ]
-        
+
         for user, is_staff, is_superuser in users:
             with self.subTest(user=user.username):
                 self.client.login(username=user.username, password='testpass123')
                 response = self.client.get(reverse('main:settings'))
-                
+
                 self.assertEqual(response.status_code, 200)
-                
+
                 env_info = response.context['environment_info']
                 self.assertEqual(env_info['is_staff'], is_staff)
                 self.assertEqual(env_info['is_superuser'], is_superuser)

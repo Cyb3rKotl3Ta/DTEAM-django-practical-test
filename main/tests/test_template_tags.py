@@ -18,7 +18,7 @@ class TemplateTagsTestCase(TestCase):
     def test_lookup_filter_with_dict(self):
         """Test lookup filter with dictionary."""
         test_dict = {'key1': 'value1', 'key2': 'value2', 'key3': 123}
-        
+
         self.assertEqual(lookup(test_dict, 'key1'), 'value1')
         self.assertEqual(lookup(test_dict, 'key2'), 'value2')
         self.assertEqual(lookup(test_dict, 'key3'), 123)
@@ -111,14 +111,14 @@ class TemplateTagsTestCase(TestCase):
             <p>Missing: {{ test_dict|lookup:'missing' }}</p>
         </div>
         """
-        
+
         template = Template(template_string)
         context = Context({
             'test_dict': {'key1': 'value1', 'key2': 'value2'}
         })
-        
+
         rendered = template.render(context)
-        
+
         self.assertIn('Value1: value1', rendered)
         self.assertIn('Value2: value2', rendered)
         self.assertIn('Missing: ', rendered)  # Should be empty for missing key
@@ -133,16 +133,16 @@ class TemplateTagsTestCase(TestCase):
             <p>List type: {{ test_list|get_type }}</p>
         </div>
         """
-        
+
         template = Template(template_string)
         context = Context({
             'test_string': 'hello',
             'test_number': 123,
             'test_list': [1, 2, 3]
         })
-        
+
         rendered = template.render(context)
-        
+
         self.assertIn('String type: str', rendered)
         self.assertIn('Number type: int', rendered)
         self.assertIn('List type: list', rendered)
@@ -156,15 +156,15 @@ class TemplateTagsTestCase(TestCase):
             <p>Is not list: {{ test_string|is_list }}</p>
         </div>
         """
-        
+
         template = Template(template_string)
         context = Context({
             'test_list': [1, 2, 3],
             'test_string': 'hello'
         })
-        
+
         rendered = template.render(context)
-        
+
         self.assertIn('Is list: True', rendered)
         self.assertIn('Is not list: False', rendered)
 
@@ -177,15 +177,15 @@ class TemplateTagsTestCase(TestCase):
             <p>Is not dict: {{ test_string|is_dict }}</p>
         </div>
         """
-        
+
         template = Template(template_string)
         context = Context({
             'test_dict': {'key': 'value'},
             'test_string': 'hello'
         })
-        
+
         rendered = template.render(context)
-        
+
         self.assertIn('Is dict: True', rendered)
         self.assertIn('Is not dict: False', rendered)
 
@@ -199,16 +199,16 @@ class TemplateTagsTestCase(TestCase):
             <p>String: {{ test_string|format_setting_value }}</p>
         </div>
         """
-        
+
         template = Template(template_string)
         context = Context({
             'test_bool': True,
             'test_list': [1, 2, 3],
             'test_string': 'hello'
         })
-        
+
         rendered = template.render(context)
-        
+
         self.assertIn('Boolean: True', rendered)
         self.assertIn('List: [1, 2, 3]', rendered)
         self.assertIn('String: hello', rendered)
@@ -217,14 +217,14 @@ class TemplateTagsTestCase(TestCase):
         """Test template tags with settings context from context processor."""
         from ..context_processors import settings_context
         from django.test import RequestFactory
-        
+
         factory = RequestFactory()
         request = factory.get('/')
         request.user = self.user
-        
+
         # Get settings context
         context_dict = settings_context(request)
-        
+
         template_string = """
         {% load settings_extras %}
         <div>
@@ -233,12 +233,12 @@ class TemplateTagsTestCase(TestCase):
             <p>Is DEBUG bool: {{ settings|lookup:'DEBUG'|format_setting_value }}</p>
         </div>
         """
-        
+
         template = Template(template_string)
         context = Context(context_dict)
-        
+
         rendered = template.render(context)
-        
+
         self.assertIn('DEBUG:', rendered)
         self.assertIn('DEBUG Type: bool', rendered)
         # DEBUG might be False in test environment

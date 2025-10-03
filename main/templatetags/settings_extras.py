@@ -7,7 +7,7 @@ register = template.Library()
 def lookup(dictionary, key):
     """
     Template filter to lookup a value in a dictionary by key.
-    
+
     Usage: {{ dictionary|lookup:key }}
     """
     if hasattr(dictionary, 'get'):
@@ -19,7 +19,7 @@ def lookup(dictionary, key):
 def get_type(value):
     """
     Template filter to get the type of a value.
-    
+
     Usage: {{ value|get_type }}
     """
     return type(value).__name__
@@ -29,7 +29,7 @@ def get_type(value):
 def is_list(value):
     """
     Template filter to check if a value is a list.
-    
+
     Usage: {{ value|is_list }}
     """
     return isinstance(value, list)
@@ -39,7 +39,7 @@ def is_list(value):
 def is_dict(value):
     """
     Template filter to check if a value is a dictionary.
-    
+
     Usage: {{ value|is_dict }}
     """
     return isinstance(value, dict)
@@ -49,7 +49,7 @@ def is_dict(value):
 def format_setting_value(value):
     """
     Template filter to format setting values for display.
-    
+
     Usage: {{ value|format_setting_value }}
     """
     if isinstance(value, bool):

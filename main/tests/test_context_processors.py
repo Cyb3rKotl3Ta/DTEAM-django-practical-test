@@ -19,9 +19,9 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that settings_context processor returns a dictionary."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
-        
+
         self.assertIsInstance(context, dict)
         self.assertIn('settings', context)
 
@@ -29,10 +29,10 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that settings context contains core Django settings."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
         settings_dict = context['settings']
-        
+
         # Test core Django settings
         self.assertIn('DEBUG', settings_dict)
         self.assertIn('SECRET_KEY', settings_dict)
@@ -46,10 +46,10 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that settings context contains database settings."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
         settings_dict = context['settings']
-        
+
         self.assertIn('DATABASES', settings_dict)
         self.assertIn('default', settings_dict['DATABASES'])
         self.assertIn('ENGINE', settings_dict['DATABASES']['default'])
@@ -59,10 +59,10 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that settings context contains static and media settings."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
         settings_dict = context['settings']
-        
+
         self.assertIn('STATIC_URL', settings_dict)
         self.assertIn('MEDIA_URL', settings_dict)
         self.assertIn('STATIC_ROOT', settings_dict)
@@ -72,10 +72,10 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that settings context contains security settings."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
         settings_dict = context['settings']
-        
+
         self.assertIn('SECURE_SSL_REDIRECT', settings_dict)
         self.assertIn('SECURE_HSTS_SECONDS', settings_dict)
         self.assertIn('X_FRAME_OPTIONS', settings_dict)
@@ -86,10 +86,10 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that settings context contains email settings."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
         settings_dict = context['settings']
-        
+
         self.assertIn('EMAIL_BACKEND', settings_dict)
         self.assertIn('EMAIL_HOST', settings_dict)
         self.assertIn('EMAIL_PORT', settings_dict)
@@ -100,10 +100,10 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that settings context contains custom project settings."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
         settings_dict = context['settings']
-        
+
         self.assertIn('DJANGO_ENV', settings_dict)
         self.assertIn('REQUEST_LOG_EXCLUDED_PATHS', settings_dict)
         self.assertIn('REQUEST_LOG_EXCLUDED_METHODS', settings_dict)
@@ -113,10 +113,10 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that settings context contains system information."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
         settings_dict = context['settings']
-        
+
         self.assertIn('PYTHON_VERSION', settings_dict)
         self.assertIn('DJANGO_VERSION', settings_dict)
         self.assertIn('CURRENT_TIME', settings_dict)
@@ -132,10 +132,10 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that SECRET_KEY is masked for security."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
         settings_dict = context['settings']
-        
+
         secret_key = settings_dict['SECRET_KEY']
         if secret_key:
             self.assertTrue(secret_key.endswith('...'))
@@ -145,10 +145,10 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that INSTALLED_APPS is included in settings context."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
         settings_dict = context['settings']
-        
+
         self.assertIn('INSTALLED_APPS', settings_dict)
         self.assertIsInstance(settings_dict['INSTALLED_APPS'], list)
         self.assertIn('django.contrib.admin', settings_dict['INSTALLED_APPS'])
@@ -157,10 +157,10 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that MIDDLEWARE is included in settings context."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         context = settings_context(request)
         settings_dict = context['settings']
-        
+
         self.assertIn('MIDDLEWARE', settings_dict)
         self.assertIsInstance(settings_dict['MIDDLEWARE'], list)
         self.assertIn('django.middleware.security.SecurityMiddleware', settings_dict['MIDDLEWARE'])
@@ -169,7 +169,7 @@ class SettingsContextProcessorTestCase(TestCase):
         """Test that settings context works in Django templates."""
         request = self.factory.get('/')
         request.user = self.user
-        
+
         # Create a simple template that uses settings
         template_string = """
         {% load settings_extras %}
@@ -179,12 +179,12 @@ class SettingsContextProcessorTestCase(TestCase):
             <p>PYTHON_VERSION: {{ settings.PYTHON_VERSION }}</p>
         </div>
         """
-        
+
         template = Template(template_string)
         context = Context(settings_context(request))
-        
+
         rendered = template.render(context)
-        
+
         self.assertIn('DEBUG:', rendered)
         self.assertIn('TIME_ZONE:', rendered)
         self.assertIn('PYTHON_VERSION:', rendered)
@@ -194,38 +194,38 @@ class SettingsContextProcessorTestCase(TestCase):
     def test_settings_context_with_different_request_methods(self):
         """Test that settings context works with different HTTP methods."""
         methods = ['GET', 'POST', 'PUT', 'DELETE']
-        
+
         for method in methods:
             with self.subTest(method=method):
                 request = getattr(self.factory, method.lower())('/')
                 request.user = self.user
-                
+
                 context = settings_context(request)
                 settings_dict = context['settings']
-                
+
                 self.assertEqual(settings_dict['REQUEST_METHOD'], method)
 
     def test_settings_context_with_different_paths(self):
         """Test that settings context works with different paths."""
         paths = ['/', '/admin/', '/api/', '/settings/']
-        
+
         for path in paths:
             with self.subTest(path=path):
                 request = self.factory.get(path)
                 request.user = self.user
-                
+
                 context = settings_context(request)
                 settings_dict = context['settings']
-                
+
                 self.assertEqual(settings_dict['PATH_INFO'], path)
 
     def test_settings_context_anonymous_user(self):
         """Test that settings context works with anonymous users."""
         request = self.factory.get('/')
         request.user = User()  # Anonymous user
-        
+
         context = settings_context(request)
-        
+
         self.assertIsInstance(context, dict)
         self.assertIn('settings', context)
         settings_dict = context['settings']

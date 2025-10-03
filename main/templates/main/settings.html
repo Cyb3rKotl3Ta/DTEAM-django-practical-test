@@ -145,7 +145,7 @@
                         <p class="mb-1"><strong>Python:</strong> {{ settings.PYTHON_VERSION }}</p>
                         <p class="mb-1"><strong>Django:</strong> {{ settings.DJANGO_VERSION }}</p>
                         <p class="mb-1"><strong>Environment:</strong> {{ settings.DJANGO_ENV|title }}</p>
-                        <p class="mb-1"><strong>Debug Mode:</strong> 
+                        <p class="mb-1"><strong>Debug Mode:</strong>
                             {% if settings.DEBUG %}
                                 <span class="badge bg-warning">ON</span>
                             {% else %}
@@ -260,7 +260,7 @@
                         <strong>Available in all templates:</strong> <code>{{ settings }}</code>
                     </p>
                     <p class="mb-0">
-                        <strong>Total Settings Exposed:</strong> 
+                        <strong>Total Settings Exposed:</strong>
                         <span class="badge bg-success">{{ settings|length }} settings</span>
                     </p>
                 </div>
@@ -275,7 +275,7 @@
     function toggleCollapsible(element) {
         element.classList.toggle('active');
     }
-    
+
     function toggleFullValue(button) {
         const fullValue = button.nextElementSibling;
         if (fullValue.style.display === 'none') {
@@ -286,7 +286,7 @@
             button.textContent = 'Show Full';
         }
     }
-    
+
     // Auto-expand first section
     document.addEventListener('DOMContentLoaded', function() {
         const firstCollapsible = document.querySelector('.collapsible');

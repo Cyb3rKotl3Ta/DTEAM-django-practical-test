@@ -97,26 +97,26 @@ def cv_pdf_view_view(request, cv_id):
 class SettingsView(LoginRequiredMixin, TemplateView):
     """
     Settings page view that displays Django settings values.
-    
+
     Following SOLID principles:
     - Single Responsibility: Only handles settings display
     - Open/Closed: Easy to extend with new settings
     - Dependency Inversion: Uses Django's settings system
     """
     template_name = 'main/settings.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         # Add additional context data
         context.update({
             'page_title': 'Django Settings',
             'settings_categories': self._get_settings_categories(),
             'environment_info': self._get_environment_info(),
         })
-        
+
         return context
-    
+
     def _get_settings_categories(self):
         """
         Organize settings into logical categories for better display.
@@ -158,7 +158,7 @@ class SettingsView(LoginRequiredMixin, TemplateView):
                 'QUERY_STRING', 'REMOTE_ADDR', 'HTTP_USER_AGENT'
             ]
         }
-    
+
     def _get_environment_info(self):
         """
         Get additional environment information.
