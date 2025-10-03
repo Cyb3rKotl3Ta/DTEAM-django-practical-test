@@ -19,17 +19,16 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY pyproject.toml poetry.lock* ./
+COPY pyproject.toml ./
 RUN pip install --no-cache-dir poetry \
     && poetry config virtualenvs.create false \
-    && poetry install --only=main --no-interaction --no-ansi --no-root \
-    && pip uninstall -y poetry
+    && poetry install --only=main --no-interaction --no-ansi --no-root
 
 # Copy project
 COPY . .
 
-# Create directories for static, media files and logs
-RUN mkdir -p /app/staticfiles /app/media /app/logs
+# Create logs directory
+RUN mkdir -p logs
 
 # Collect static files
 RUN python manage.py collectstatic --noinput --clear

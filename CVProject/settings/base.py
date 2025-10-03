@@ -76,8 +76,6 @@ WSGI_APPLICATION = 'CVProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-import dj_database_url
-
 # Default to SQLite for development
 DATABASES = {
     'default': {
@@ -88,6 +86,7 @@ DATABASES = {
 
 # Override with PostgreSQL if DATABASE_URL is provided (Docker/Production)
 if 'DATABASE_URL' in os.environ:
+    import dj_database_url
     DATABASES['default'] = dj_database_url.parse(
         os.environ['DATABASE_URL'],
         conn_max_age=600,
