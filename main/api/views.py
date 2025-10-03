@@ -22,71 +22,71 @@ class CVViewSet(viewsets.ModelViewSet):
         skills_count=Count('skills'),
         projects_count=Count('projects')
     ).order_by('-created_at')
-    
+
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'is_active']
     search_fields = ['first_name', 'last_name', 'bio', 'skills__name', 'projects__title']
     ordering_fields = ['created_at', 'updated_at', 'first_name', 'last_name']
     ordering = ['-created_at']
-    
+
     def get_serializer_class(self):
         if self.action == 'list':
             return CVListSerializer
         elif self.action in ['create', 'update', 'partial_update']:
             return CVCreateUpdateSerializer
         return CVDetailSerializer
-    
+
     def get_queryset(self):
         queryset = super().get_queryset()
-        
+
         if self.action == 'list':
             return queryset.only(
-                'id', 'first_name', 'last_name', 'bio', 'status', 
+                'id', 'first_name', 'last_name', 'bio', 'status',
                 'is_active', 'created_at', 'updated_at'
             )
-        
+
         return queryset
-    
+
     @action(detail=True, methods=['get'])
     def skills(self, request, pk=None):
         cv = self.get_object()
         skills = cv.skills.all().order_by('category', 'name')
         serializer = SkillSerializer(skills, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=['get'])
     def projects(self, request, pk=None):
         cv = self.get_object()
         projects = cv.projects.all().order_by('-is_featured', '-start_date')
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=['get'])
     def contacts(self, request, pk=None):
         cv = self.get_object()
         contacts = cv.contacts.filter(is_public=True).order_by('contact_type')
         serializer = ContactSerializer(contacts, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=['get'])
     def featured_projects(self, request, pk=None):
         cv = self.get_object()
         featured_projects = cv.projects.filter(is_featured=True).order_by('-start_date')
         serializer = ProjectSerializer(featured_projects, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=['get'])
     def skills_by_category(self, request, pk=None):
         cv = self.get_object()
         skills_by_category = {}
-        
+
         for skill in cv.skills.all().order_by('category', 'name'):
             category = skill.get_category_display()
             if category not in skills_by_category:
                 skills_by_category[category] = []
             skills_by_category[category].append(SkillSerializer(skill).data)
-        
+
         return Response(skills_by_category)
 
 
