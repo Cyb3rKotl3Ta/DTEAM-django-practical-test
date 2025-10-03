@@ -66,6 +66,19 @@ createsuperuser:
 loaddata:
 	docker-compose exec web python manage.py load_sample_data --clear
 
+# Celery commands
+celery-worker:
+	docker-compose exec celery celery -A CVProject worker --loglevel=info
+
+celery-beat:
+	docker-compose exec celery-beat celery -A CVProject beat --loglevel=info
+
+celery-flower:
+	docker-compose exec celery celery -A CVProject flower
+
+celery-test:
+	docker-compose exec web python -c "from main.tasks import debug_task; print(debug_task.delay().get())"
+
 # Development setup
 dev-setup: build up migrate collectstatic loaddata
 	@echo "Development environment is ready!"

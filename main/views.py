@@ -5,8 +5,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.conf import settings
+from django.contrib import messages
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from .models import CV, Skill, Project, Contact
 from .services.pdf_service import PDFService
+from .forms import SendCVEmailForm
+from .tasks import send_cv_pdf_email
 
 
 def home_view(request):
@@ -170,3 +176,35 @@ class SettingsView(LoginRequiredMixin, TemplateView):
             'user_permissions': list(self.request.user.get_all_permissions()),
             'user_groups': list(self.request.user.groups.values_list('name', flat=True)),
         }
+
+
+@require_POST
+def send_cv_email_view(request, cv_id):
+    """View to handle CV PDF email sending via Celery."""
+    cv = get_object_or_404(CV.objects.published(), id=cv_id)
+    
+    form = SendCVEmailForm(request.POST)
+    
+    if form.is_valid():
+        recipient_email = form.cleaned_data['recipient_email']
+        sender_name = form.cleaned_data.get('sender_name', '')
+        
+        # Start Celery task
+        task = send_cv_pdf_email.delay(cv_id, recipient_email, sender_name)
+        
+        messages.success(
+            request, 
+            f'CV PDF is being sent to {recipient_email}. You will be notified when it\'s complete.'
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': f'CV PDF is being sent to {recipient_email}',
+            'task_id': task.id
+        })
+    else:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Invalid form data',
+            'errors': form.errors
+        }, status=400)
