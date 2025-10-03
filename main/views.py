@@ -165,18 +165,18 @@ class SettingsView(LoginRequiredMixin, TemplateView):
 def send_cv_email_view(request, cv_id):
     cv = get_object_or_404(CV.objects.published(), id=cv_id)
     form = SendCVEmailForm(request.POST)
-    
+
     if form.is_valid():
         recipient_email = form.cleaned_data['recipient_email']
         sender_name = form.cleaned_data.get('sender_name', '')
-        
+
         task = send_cv_pdf_email.delay(cv_id, recipient_email, sender_name)
-        
+
         messages.success(
-            request, 
+            request,
             f'CV PDF is being sent to {recipient_email}. You will be notified when it\'s complete.'
         )
-        
+
         return JsonResponse({
             'status': 'success',
             'message': f'CV PDF is being sent to {recipient_email}',

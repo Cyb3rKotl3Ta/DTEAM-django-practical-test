@@ -10,7 +10,7 @@ class SendCVEmailForm(forms.Form):
             'required': True
         })
     )
-    
+
     sender_name = forms.CharField(
         label='Your Name (Optional)',
         max_length=100,
@@ -20,7 +20,7 @@ class SendCVEmailForm(forms.Form):
             'placeholder': 'Enter your name (optional)'
         })
     )
-    
+
     message = forms.CharField(
         label='Additional Message (Optional)',
         max_length=500,
@@ -31,13 +31,13 @@ class SendCVEmailForm(forms.Form):
             'placeholder': 'Add a personal message (optional)'
         })
     )
-    
+
     def clean_recipient_email(self):
         email = self.cleaned_data.get('recipient_email')
         if not email:
             raise forms.ValidationError('Email address is required.')
         return email.lower()
-    
+
     def clean_sender_name(self):
         name = self.cleaned_data.get('sender_name', '').strip()
         return name

@@ -377,12 +377,12 @@
         if (emailForm) {
             emailForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
                 sendEmailBtn.disabled = true;
                 sendEmailBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
-                
+
                 const formData = new FormData(emailForm);
-                
+
                 fetch(emailForm.action, {
                     method: 'POST',
                     body: formData,
