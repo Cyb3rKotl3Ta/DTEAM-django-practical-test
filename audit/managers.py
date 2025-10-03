@@ -100,8 +100,12 @@ class RequestLogManager(models.Manager):
         ).order_by('-count')
 
     def get_hourly_distribution(self):
-        return self.extra(
-            select={'hour': 'EXTRACT(hour FROM timestamp)'}
-        ).values('hour').annotate(
-            count=models.Count('id')
-        ).order_by('hour')
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT strftime('%%H', timestamp) as hour, COUNT(*) as count
+                FROM audit_requestlog
+                GROUP BY strftime('%%H', timestamp)
+                ORDER BY hour
+            """)
+            return [{'hour': row[0], 'count': row[1]} for row in cursor.fetchall()]

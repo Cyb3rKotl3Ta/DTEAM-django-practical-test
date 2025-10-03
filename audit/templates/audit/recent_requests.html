@@ -1,0 +1,235 @@
+{% extends 'audit/base.html' %}
+
+{% block title %}Recent Requests - Audit Logs{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">
+                <i class="fas fa-chart-line me-2"></i>Request Logs
+            </h1>
+            <div class="pagination-info">
+                Showing {{ request_logs|length }} of {{ total_logs }} total requests
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        {% if stats %}
+        <div class="stats-card">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h4 class="mb-1">{{ stats.total_requests }}</h4>
+                    <small>Total Requests</small>
+                </div>
+                <div class="col-md-3">
+                    <h4 class="mb-1">{{ stats.success_rate|floatformat:1 }}%</h4>
+                    <small>Success Rate</small>
+                </div>
+                <div class="col-md-3">
+                    <h4 class="mb-1">{{ stats.error_rate|floatformat:1 }}%</h4>
+                    <small>Error Rate</small>
+                </div>
+                <div class="col-md-3">
+                    <h4 class="mb-1">{{ stats.client_errors|add:stats.server_errors }}</h4>
+                    <small>Total Errors</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Filters -->
+        <div class="filter-section">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" class="form-control" id="search" name="search"
+                           value="{{ current_search }}" placeholder="Path, IP, user...">
+                </div>
+                <div class="col-md-2">
+                    <label for="method" class="form-label">Method</label>
+                    <select class="form-select" id="method" name="method">
+                        <option value="">All Methods</option>
+                        {% for method in http_methods %}
+                        <option value="{{ method }}" {% if current_method == method %}selected{% endif %}>
+                            {{ method }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">All Status</option>
+                        {% for status in status_codes %}
+                        <option value="{{ status }}" {% if current_status == status %}selected{% endif %}>
+                            {{ status }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="auth" class="form-label">Auth</label>
+                    <select class="form-select" id="auth" name="auth">
+                        <option value="">All Users</option>
+                        <option value="authenticated" {% if current_auth == 'authenticated' %}selected{% endif %}>
+                            Authenticated
+                        </option>
+                        <option value="anonymous" {% if current_auth == 'anonymous' %}selected{% endif %}>
+                            Anonymous
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search me-1"></i>Filter
+                    </button>
+                    <a href="{% url 'audit:recent_requests' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i>Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Request Logs -->
+        {% if request_logs %}
+        <div class="row">
+            {% for log in request_logs %}
+            <div class="col-12 mb-3">
+                <div class="card log-entry {% if log.is_successful %}success{% elif log.is_client_error %}client-error{% elif log.is_server_error %}server-error{% endif %}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-1">
+                                <span class="badge method-badge
+                                    {% if log.http_method == 'GET' %}bg-primary
+                                    {% elif log.http_method == 'POST' %}bg-success
+                                    {% elif log.http_method == 'PUT' %}bg-warning
+                                    {% elif log.http_method == 'DELETE' %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ log.http_method }}
+                                </span>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fw-bold">{{ log.path }}</div>
+                                {% if log.query_string %}
+                                <div class="log-details">
+                                    <i class="fas fa-question-circle me-1"></i>{{ log.query_string|truncatechars:50 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-1">
+                                <span class="badge status-badge
+                                    {% if log.is_successful %}bg-success
+                                    {% elif log.is_client_error %}bg-warning
+                                    {% elif log.is_server_error %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ log.response_status }}
+                                </span>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="user-info">
+                                    {% if log.user %}
+                                        <i class="fas fa-user me-1"></i>{{ log.user.username }}
+                                        {% if log.is_staff %}
+                                            <span class="badge bg-info ms-1">Staff</span>
+                                        {% endif %}
+                                        {% if log.is_superuser %}
+                                            <span class="badge bg-danger ms-1">Admin</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <i class="fas fa-user-slash me-1"></i>Anonymous
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="ip-info">
+                                    <i class="fas fa-globe me-1"></i>{{ log.remote_ip|default:"Unknown" }}
+                                </div>
+                                {% if log.response_time_ms %}
+                                <div class="time-badge">
+                                    <i class="fas fa-clock me-1"></i>{{ log.response_time_ms }}ms
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <div class="text-muted small">
+                                    {{ log.timestamp|date:"M d, H:i:s" }}
+                                </div>
+                                {% if log.user_agent %}
+                                <div class="log-details" title="{{ log.user_agent }}">
+                                    <i class="fas fa-desktop me-1"></i>{{ log.user_agent|truncatechars:30 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav aria-label="Request logs pagination">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if current_search %}&search={{ current_search }}{% endif %}{% if current_method %}&method={{ current_method }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_auth %}&auth={{ current_auth }}{% endif %}">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_method %}&method={{ current_method }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_auth %}&auth={{ current_auth }}{% endif %}">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_method %}&method={{ current_method }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_auth %}&auth={{ current_auth }}{% endif %}">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_method %}&method={{ current_method }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_auth %}&auth={{ current_auth }}{% endif %}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            No request logs found. Make some requests to see them here!
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Auto-refresh every 30 seconds
+    setTimeout(function() {
+        location.reload();
+    }, 30000);
+
+    // Add tooltips for user agents
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+{% endblock %}
