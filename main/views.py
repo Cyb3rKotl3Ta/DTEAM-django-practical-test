@@ -101,32 +101,18 @@ def cv_pdf_view_view(request, cv_id):
 
 
 class SettingsView(LoginRequiredMixin, TemplateView):
-    """
-    Settings page view that displays Django settings values.
-
-    Following SOLID principles:
-    - Single Responsibility: Only handles settings display
-    - Open/Closed: Easy to extend with new settings
-    - Dependency Inversion: Uses Django's settings system
-    """
     template_name = 'main/settings.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # Add additional context data
         context.update({
             'page_title': 'Django Settings',
             'settings_categories': self._get_settings_categories(),
             'environment_info': self._get_environment_info(),
         })
-
         return context
 
     def _get_settings_categories(self):
-        """
-        Organize settings into logical categories for better display.
-        """
         return {
             'Core Django': [
                 'DEBUG', 'SECRET_KEY', 'ALLOWED_HOSTS', 'TIME_ZONE',
@@ -166,9 +152,6 @@ class SettingsView(LoginRequiredMixin, TemplateView):
         }
 
     def _get_environment_info(self):
-        """
-        Get additional environment information.
-        """
         return {
             'user': self.request.user,
             'is_staff': self.request.user.is_staff,
@@ -180,16 +163,13 @@ class SettingsView(LoginRequiredMixin, TemplateView):
 
 @require_POST
 def send_cv_email_view(request, cv_id):
-    """View to handle CV PDF email sending via Celery."""
     cv = get_object_or_404(CV.objects.published(), id=cv_id)
-    
     form = SendCVEmailForm(request.POST)
     
     if form.is_valid():
         recipient_email = form.cleaned_data['recipient_email']
         sender_name = form.cleaned_data.get('sender_name', '')
         
-        # Start Celery task
         task = send_cv_pdf_email.delay(cv_id, recipient_email, sender_name)
         
         messages.success(

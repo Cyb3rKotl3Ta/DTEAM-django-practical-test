@@ -1,9 +1,6 @@
 from django import forms
 
-
 class SendCVEmailForm(forms.Form):
-    """Form for sending CV PDF via email."""
-    
     recipient_email = forms.EmailField(
         label='Recipient Email',
         max_length=254,
@@ -36,13 +33,11 @@ class SendCVEmailForm(forms.Form):
     )
     
     def clean_recipient_email(self):
-        """Validate recipient email."""
         email = self.cleaned_data.get('recipient_email')
         if not email:
             raise forms.ValidationError('Email address is required.')
         return email.lower()
     
     def clean_sender_name(self):
-        """Clean and validate sender name."""
         name = self.cleaned_data.get('sender_name', '').strip()
         return name

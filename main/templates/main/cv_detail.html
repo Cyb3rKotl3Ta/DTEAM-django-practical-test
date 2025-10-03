@@ -329,17 +329,17 @@
                                 {% csrf_token %}
                                 <div class="mb-3">
                                     <label for="recipient_email" class="form-label">Recipient Email</label>
-                                    <input type="email" class="form-control" id="recipient_email" name="recipient_email" 
+                                    <input type="email" class="form-control" id="recipient_email" name="recipient_email"
                                            placeholder="Enter recipient email address" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="sender_name" class="form-label">Your Name (Optional)</label>
-                                    <input type="text" class="form-control" id="sender_name" name="sender_name" 
+                                    <input type="text" class="form-control" id="sender_name" name="sender_name"
                                            placeholder="Enter your name (optional)">
                                 </div>
                                 <div class="mb-3">
                                     <label for="message" class="form-label">Additional Message (Optional)</label>
-                                    <textarea class="form-control" id="message" name="message" rows="3" 
+                                    <textarea class="form-control" id="message" name="message" rows="3"
                                               placeholder="Add a personal message (optional)"></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-success w-100" id="sendEmailBtn">
@@ -365,13 +365,11 @@
 {% block extra_scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
 
-        // Handle email form submission
         const emailForm = document.getElementById('emailForm');
         const sendEmailBtn = document.getElementById('sendEmailBtn');
         const emailStatus = document.getElementById('emailStatus');
@@ -380,14 +378,11 @@
             emailForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                // Disable button and show loading
                 sendEmailBtn.disabled = true;
                 sendEmailBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
                 
-                // Get form data
                 const formData = new FormData(emailForm);
                 
-                // Send AJAX request
                 fetch(emailForm.action, {
                     method: 'POST',
                     body: formData,
@@ -425,7 +420,6 @@
                     emailStatus.style.display = 'block';
                 })
                 .finally(() => {
-                    // Re-enable button
                     sendEmailBtn.disabled = false;
                     sendEmailBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Send PDF to Email';
                 });
