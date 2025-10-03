@@ -31,7 +31,7 @@ class CVAdmin(admin.ModelAdmin):
     search_fields = ['first_name', 'last_name', 'bio']
     readonly_fields = ['created_at', 'updated_at']
     inlines = [SkillInline, ProjectInline, ContactInline]
-    
+
     fieldsets = (
         ('Personal Information', {
             'fields': ('first_name', 'last_name', 'bio')
@@ -44,11 +44,11 @@ class CVAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def skills_count(self, obj):
         return obj.skills.count()
     skills_count.short_description = 'Skills'
-    
+
     def projects_count(self, obj):
         return obj.projects.count()
     projects_count.short_description = 'Projects'
@@ -60,7 +60,7 @@ class SkillAdmin(admin.ModelAdmin):
     list_filter = ['category', 'proficiency_level', 'created_at']
     search_fields = ['name', 'description', 'cv__first_name', 'cv__last_name']
     readonly_fields = ['created_at', 'updated_at']
-    
+
     fieldsets = (
         ('Skill Information', {
             'fields': ('cv', 'name', 'category', 'proficiency_level', 'description')
@@ -79,7 +79,7 @@ class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['title', 'description', 'technologies_used', 'cv__first_name', 'cv__last_name']
     readonly_fields = ['created_at', 'updated_at', 'duration_display']
     date_hierarchy = 'start_date'
-    
+
     fieldsets = (
         ('Project Information', {
             'fields': ('cv', 'title', 'description', 'status')
@@ -95,7 +95,7 @@ class ProjectAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def duration_display(self, obj):
         if obj.end_date:
             duration = obj.end_date - obj.start_date
@@ -113,7 +113,7 @@ class ContactAdmin(admin.ModelAdmin):
     list_filter = ['contact_type', 'is_primary', 'is_public', 'created_at']
     search_fields = ['value', 'cv__first_name', 'cv__last_name']
     readonly_fields = ['created_at', 'updated_at']
-    
+
     fieldsets = (
         ('Contact Information', {
             'fields': ('cv', 'contact_type', 'value')

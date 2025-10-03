@@ -133,7 +133,7 @@ class Contact(TimeStampedModel):
 
     def clean(self):
         from django.core.exceptions import ValidationError
-        
+
         if self.contact_type == 'email':
             EmailValidator()(self.value)
         elif self.contact_type == 'phone' and not self.value.replace('+', '').replace('-', '').replace(' ', '').isdigit():
