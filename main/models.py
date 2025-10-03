@@ -1,9 +1,3 @@
-"""
-Models for the main app.
-
-Following SOLID principles, DRY approach, and proper data organization.
-"""
-
 from django.db import models
 from django.core.validators import MinLengthValidator, EmailValidator
 from django.utils import timezone
@@ -12,11 +6,6 @@ from .managers.cv_manager import CVManager, SkillManager, ProjectManager, Contac
 
 
 class TimeStampedModel(models.Model):
-    """
-    Abstract base model that provides created_at and updated_at fields.
-    
-    Following DRY principle by providing common fields to all models.
-    """
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -25,38 +14,12 @@ class TimeStampedModel(models.Model):
 
 
 class CV(TimeStampedModel):
-    """
-    Main CV model representing a person's curriculum vitae.
-    
-    Following Single Responsibility Principle - handles only CV data.
-    """
-    first_name = models.CharField(
-        max_length=50,
-        validators=[MinLengthValidator(2)],
-        help_text="Person's first name"
-    )
-    last_name = models.CharField(
-        max_length=50,
-        validators=[MinLengthValidator(2)],
-        help_text="Person's last name"
-    )
-    bio = models.TextField(
-        max_length=1000,
-        blank=True,
-        help_text="Personal biography and summary"
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=CV_STATUS_CHOICES,
-        default='draft',
-        help_text="Current status of the CV"
-    )
-    is_active = models.BooleanField(
-        default=True,
-        help_text="Whether this CV is currently active"
-    )
+    first_name = models.CharField(max_length=50, validators=[MinLengthValidator(2)])
+    last_name = models.CharField(max_length=50, validators=[MinLengthValidator(2)])
+    bio = models.TextField(max_length=1000, blank=True)
+    status = models.CharField(max_length=20, choices=CV_STATUS_CHOICES, default='draft')
+    is_active = models.BooleanField(default=True)
 
-    # Custom managers
     objects = CVManager()
 
     class Meta:
@@ -74,56 +37,25 @@ class CV(TimeStampedModel):
 
     @property
     def full_name(self):
-        """Return the full name of the person."""
         return f"{self.first_name} {self.last_name}"
 
     def get_skills_by_category(self, category):
-        """Get skills filtered by category."""
         return self.skills.filter(category=category)
 
     def get_active_projects(self):
-        """Get only active projects."""
         return self.projects.filter(status='in_progress')
 
     def get_primary_contact(self, contact_type):
-        """Get primary contact of specific type."""
         return self.contacts.filter(contact_type=contact_type, is_primary=True).first()
 
 
 class Skill(TimeStampedModel):
-    """
-    Skill model representing a person's skills.
-    
-    Following Single Responsibility Principle - handles only skill data.
-    """
-    cv = models.ForeignKey(
-        CV,
-        on_delete=models.CASCADE,
-        related_name='skills',
-        help_text="CV this skill belongs to"
-    )
-    name = models.CharField(
-        max_length=100,
-        validators=[MinLengthValidator(2)],
-        help_text="Name of the skill"
-    )
-    category = models.CharField(
-        max_length=20,
-        choices=SKILL_CATEGORIES,
-        help_text="Category of the skill"
-    )
-    proficiency_level = models.PositiveIntegerField(
-        default=1,
-        choices=[(i, f"{i}/5") for i in range(1, 6)],
-        help_text="Proficiency level from 1 to 5"
-    )
-    description = models.TextField(
-        max_length=500,
-        blank=True,
-        help_text="Additional description of the skill"
-    )
+    cv = models.ForeignKey(CV, on_delete=models.CASCADE, related_name='skills')
+    name = models.CharField(max_length=100, validators=[MinLengthValidator(2)])
+    category = models.CharField(max_length=20, choices=SKILL_CATEGORIES)
+    proficiency_level = models.PositiveIntegerField(default=1, choices=[(i, f"{i}/5") for i in range(1, 6)])
+    description = models.TextField(max_length=500, blank=True)
 
-    # Custom managers
     objects = SkillManager()
 
     class Meta:
@@ -141,55 +73,16 @@ class Skill(TimeStampedModel):
 
 
 class Project(TimeStampedModel):
-    """
-    Project model representing a person's projects.
-    
-    Following Single Responsibility Principle - handles only project data.
-    """
-    cv = models.ForeignKey(
-        CV,
-        on_delete=models.CASCADE,
-        related_name='projects',
-        help_text="CV this project belongs to"
-    )
-    title = models.CharField(
-        max_length=200,
-        validators=[MinLengthValidator(3)],
-        help_text="Title of the project"
-    )
-    description = models.TextField(
-        max_length=1000,
-        help_text="Detailed description of the project"
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=PROJECT_STATUS_CHOICES,
-        default='completed',
-        help_text="Current status of the project"
-    )
-    start_date = models.DateField(
-        help_text="Project start date"
-    )
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-        help_text="Project end date (null if ongoing)"
-    )
-    technologies_used = models.TextField(
-        max_length=500,
-        blank=True,
-        help_text="Technologies and tools used in the project"
-    )
-    project_url = models.URLField(
-        blank=True,
-        help_text="URL to the project (GitHub, live demo, etc.)"
-    )
-    is_featured = models.BooleanField(
-        default=False,
-        help_text="Whether this project should be featured prominently"
-    )
+    cv = models.ForeignKey(CV, on_delete=models.CASCADE, related_name='projects')
+    title = models.CharField(max_length=200, validators=[MinLengthValidator(3)])
+    description = models.TextField(max_length=1000)
+    status = models.CharField(max_length=20, choices=PROJECT_STATUS_CHOICES, default='completed')
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    technologies_used = models.TextField(max_length=500, blank=True)
+    project_url = models.URLField(blank=True)
+    is_featured = models.BooleanField(default=False)
 
-    # Custom managers
     objects = ProjectManager()
 
     class Meta:
@@ -207,47 +100,21 @@ class Project(TimeStampedModel):
 
     @property
     def duration(self):
-        """Calculate project duration."""
         if self.end_date:
             return self.end_date - self.start_date
         return timezone.now().date() - self.start_date
 
     def is_ongoing(self):
-        """Check if project is currently ongoing."""
         return self.end_date is None and self.status == 'in_progress'
 
 
 class Contact(TimeStampedModel):
-    """
-    Contact model representing different ways to contact a person.
-    
-    Following Single Responsibility Principle - handles only contact data.
-    """
-    cv = models.ForeignKey(
-        CV,
-        on_delete=models.CASCADE,
-        related_name='contacts',
-        help_text="CV this contact belongs to"
-    )
-    contact_type = models.CharField(
-        max_length=20,
-        choices=CONTACT_TYPES,
-        help_text="Type of contact information"
-    )
-    value = models.CharField(
-        max_length=200,
-        help_text="The actual contact value (email, phone, URL, etc.)"
-    )
-    is_primary = models.BooleanField(
-        default=False,
-        help_text="Whether this is the primary contact of this type"
-    )
-    is_public = models.BooleanField(
-        default=True,
-        help_text="Whether this contact should be publicly visible"
-    )
+    cv = models.ForeignKey(CV, on_delete=models.CASCADE, related_name='contacts')
+    contact_type = models.CharField(max_length=20, choices=CONTACT_TYPES)
+    value = models.CharField(max_length=200)
+    is_primary = models.BooleanField(default=False)
+    is_public = models.BooleanField(default=True)
 
-    # Custom managers
     objects = ContactManager()
 
     class Meta:
@@ -265,7 +132,6 @@ class Contact(TimeStampedModel):
         return f"{self.get_contact_type_display()}: {self.value}"
 
     def clean(self):
-        """Validate contact data based on type."""
         from django.core.exceptions import ValidationError
         
         if self.contact_type == 'email':

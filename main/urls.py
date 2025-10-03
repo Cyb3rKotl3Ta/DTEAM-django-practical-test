@@ -1,9 +1,3 @@
-"""
-URL configuration for main app.
-
-Following DRY principle by centralizing URL patterns.
-"""
-
 from django.urls import path
 from . import views
 
