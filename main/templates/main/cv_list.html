@@ -39,11 +39,11 @@
                                 </small>
                             </div>
                         </div>
-                        
+
                         <p class="card-text text-muted mb-3">
                             {{ cv.bio|truncatewords:20 }}
                         </p>
-                        
+
                         <div class="mb-3">
                             <h6 class="text-primary mb-2">
                                 <i class="fas fa-tools me-1"></i>Skills ({{ cv.skills_count }})
@@ -61,7 +61,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <h6 class="text-success mb-2">
                                 <i class="fas fa-project-diagram me-1"></i>Projects ({{ cv.projects_count }})
@@ -69,7 +69,7 @@
                             {% for project in cv.projects.all|slice:":2" %}
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <small class="text-muted">{{ project.title }}</small>
-                                <span class="badge 
+                                <span class="badge
                                     {% if project.status == 'completed' %}bg-success
                                     {% elif project.status == 'in_progress' %}bg-warning
                                     {% else %}bg-info{% endif %} project-status">
@@ -81,16 +81,16 @@
                             <small class="text-muted">+{{ cv.projects_count|add:"-2" }} more projects</small>
                             {% endif %}
                         </div>
-                        
+
                         <div class="mb-3">
                             <h6 class="text-info mb-2">
                                 <i class="fas fa-address-book me-1"></i>Contact
                             </h6>
                             <div class="d-flex flex-wrap">
                                 {% for contact in cv.contacts.all|slice:":3" %}
-                                <a href="{% if contact.contact_type == 'email' %}mailto:{{ contact.value }}{% elif contact.contact_type == 'phone' %}tel:{{ contact.value }}{% else %}{{ contact.value }}{% endif %}" 
+                                <a href="{% if contact.contact_type == 'email' %}mailto:{{ contact.value }}{% elif contact.contact_type == 'phone' %}tel:{{ contact.value }}{% else %}{{ contact.value }}{% endif %}"
                                    class="text-decoration-none me-3 mb-1" target="_blank">
-                                    <i class="fas 
+                                    <i class="fas
                                         {% if contact.contact_type == 'email' %}fa-envelope
                                         {% elif contact.contact_type == 'phone' %}fa-phone
                                         {% elif contact.contact_type == 'linkedin' %}fa-linkedin
@@ -103,13 +103,13 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="card-footer bg-transparent border-0">
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="badge bg-primary">
                                 <i class="fas fa-eye me-1"></i>Published
                             </span>
-                            <a href="#" class="btn btn-outline-primary btn-sm">
+                            <a href="{% url 'main:cv_detail' cv.id %}" class="btn btn-outline-primary btn-sm">
                                 <i class="fas fa-eye me-1"></i>View Details
                             </a>
                         </div>
