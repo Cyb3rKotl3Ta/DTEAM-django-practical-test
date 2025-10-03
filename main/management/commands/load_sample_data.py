@@ -24,16 +24,16 @@ class Command(BaseCommand):
 
             self.stdout.write('Loading initial CV data...')
             call_command('loaddata', 'initial_data.json')
-            
+
             self.stdout.write('Loading additional CV data...')
             call_command('loaddata', 'initial_cv_data.json')
-            
+
             self.stdout.write('Loading skills data...')
             call_command('loaddata', 'initial_skills_data.json')
-            
+
             self.stdout.write('Loading projects data...')
             call_command('loaddata', 'initial_projects_data.json')
-            
+
             self.stdout.write('Loading contacts data...')
             call_command('loaddata', 'initial_contacts_data.json')
 
