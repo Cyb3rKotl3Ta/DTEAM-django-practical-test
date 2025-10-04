@@ -1,18 +1,29 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse
 from django.db.models import Prefetch, Count
+<<<<<<< Updated upstream
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
+=======
+>>>>>>> Stashed changes
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 from .models import CV, Skill, Project, Contact
 from .services.pdf_service import PDFService
+<<<<<<< Updated upstream
 from .forms import SendCVEmailForm
 from .tasks import send_cv_pdf_email
+=======
+from .services.translation_service import get_translation_service
+from .utils.cv_data_utils import prepare_cv_data
+from .forms import SendCVEmailForm
+from .tasks import send_cv_pdf_email
+from .constants.languages import LANGUAGE_NAMES
+>>>>>>> Stashed changes
 
 
 def home_view(request):
@@ -82,8 +93,9 @@ def cv_pdf_download_view(request, cv_id):
         id=cv_id
     )
 
+    language = request.GET.get('language')
     pdf_service = PDFService()
-    return pdf_service.generate_cv_pdf(cv)
+    return pdf_service.generate_cv_pdf(cv, language)
 
 
 def cv_pdf_view_view(request, cv_id):
@@ -96,10 +108,12 @@ def cv_pdf_view_view(request, cv_id):
         id=cv_id
     )
 
+    language = request.GET.get('language')
     pdf_service = PDFService()
-    return pdf_service.generate_cv_pdf_inline(cv)
+    return pdf_service.generate_cv_pdf_inline(cv, language)
 
 
+<<<<<<< Updated upstream
 class SettingsView(LoginRequiredMixin, TemplateView):
     template_name = 'main/settings.html'
 
@@ -113,6 +127,11 @@ class SettingsView(LoginRequiredMixin, TemplateView):
         return context
 
     def _get_settings_categories(self):
+=======
+@login_required
+def settings_view(request):
+    def get_settings_categories():
+>>>>>>> Stashed changes
         return {
             'Core Django': [
                 'DEBUG', 'SECRET_KEY', 'ALLOWED_HOSTS', 'TIME_ZONE',
@@ -151,6 +170,7 @@ class SettingsView(LoginRequiredMixin, TemplateView):
             ]
         }
 
+<<<<<<< Updated upstream
     def _get_environment_info(self):
         return {
             'user': self.request.user,
@@ -159,6 +179,34 @@ class SettingsView(LoginRequiredMixin, TemplateView):
             'user_permissions': list(self.request.user.get_all_permissions()),
             'user_groups': list(self.request.user.groups.values_list('name', flat=True)),
         }
+=======
+    def get_environment_info():
+        user = getattr(request, 'user', None)
+        if user and user.is_authenticated:
+            return {
+                'user': user,
+                'is_staff': user.is_staff,
+                'is_superuser': user.is_superuser,
+                'user_permissions': list(user.get_all_permissions()),
+                'user_groups': list(user.groups.values_list('name', flat=True)),
+            }
+        else:
+            return {
+                'user': None,
+                'is_staff': False,
+                'is_superuser': False,
+                'user_permissions': [],
+                'user_groups': [],
+            }
+
+    context = {
+        'page_title': 'Django Settings',
+        'settings_categories': get_settings_categories(),
+        'environment_info': get_environment_info(),
+    }
+
+    return render(request, 'main/settings.html', context)
+>>>>>>> Stashed changes
 
 
 @require_POST
@@ -172,14 +220,8 @@ def send_cv_email_view(request, cv_id):
 
         task = send_cv_pdf_email.delay(cv_id, recipient_email, sender_name)
 
-        messages.success(
-            request,
-            f'CV PDF is being sent to {recipient_email}. You will be notified when it\'s complete.'
-        )
-
         return JsonResponse({
             'status': 'success',
-            'message': f'CV PDF is being sent to {recipient_email}',
             'task_id': task.id
         })
     else:
@@ -188,3 +230,38 @@ def send_cv_email_view(request, cv_id):
             'message': 'Invalid form data',
             'errors': form.errors
         }, status=400)
+<<<<<<< Updated upstream
+=======
+
+
+@require_POST
+def translate_cv_view(request, cv_id):
+    cv = get_object_or_404(CV.objects.published(), id=cv_id)
+    target_language = request.POST.get('language')
+
+    if not target_language or target_language not in LANGUAGE_NAMES:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Invalid language selection'
+        }, status=400)
+
+    try:
+        cv_data = prepare_cv_data(cv)
+
+        translation_service = get_translation_service()
+        translated_data = translation_service.translate_cv_content(cv_data, target_language)
+
+        return JsonResponse({
+            'status': 'success',
+            'message': f'CV translated to {LANGUAGE_NAMES[target_language]}',
+            'translated_data': translated_data,
+            'language': target_language,
+            'language_name': LANGUAGE_NAMES[target_language]
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Translation failed: {str(e)}'
+        }, status=500)
+>>>>>>> Stashed changes

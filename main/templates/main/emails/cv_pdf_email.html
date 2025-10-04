@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CV PDF - {{ cv.first_name }} {{ cv.last_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .content {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+        }
+        .cv-info {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #007bff;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📄 CV PDF Delivery</h1>
+        <p>Your requested CV document is attached</p>
+    </div>
+
+    <div class="content">
+        <h2>Hello!</h2>
+
+        {% if sender_name %}
+            <p><strong>{{ sender_name }}</strong> has sent you a CV document.</p>
+        {% else %}
+            <p>You have received a CV document from CV Project.</p>
+        {% endif %}
+
+        <div class="cv-info">
+            <h3>📋 CV Information</h3>
+            <p><strong>Name:</strong> {{ cv.first_name }} {{ cv.last_name }}</p>
+            {% if cv.bio %}
+                <p><strong>Bio:</strong> {{ cv.bio|truncatewords:20 }}</p>
+            {% endif %}
+            <p><strong>Skills:</strong> {{ cv.skills|length }} skills listed</p>
+            <p><strong>Projects:</strong> {{ cv.projects|length }} projects listed</p>
+        </div>
+
+        <p>The complete CV document is attached to this email as a PDF file.</p>
+
+        <p>If you have any questions or need assistance, please don't hesitate to contact us.</p>
+
+        <p>Best regards,<br>
+        <strong>CV Project Team</strong></p>
+    </div>
+
+    <div class="footer">
+        <p>This email was sent from CV Project system.</p>
+    </div>
+</body>
+</html>

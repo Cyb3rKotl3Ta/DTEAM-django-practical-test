@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Prefetch, Count
 from django.shortcuts import get_object_or_404
@@ -23,7 +23,7 @@ class CVViewSet(viewsets.ModelViewSet):
         projects_count=Count('projects')
     ).order_by('-created_at')
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'is_active']
     search_fields = ['first_name', 'last_name', 'bio', 'skills__name', 'projects__title']
@@ -93,7 +93,7 @@ class CVViewSet(viewsets.ModelViewSet):
 class SkillViewSet(viewsets.ModelViewSet):
     queryset = Skill.objects.select_related('cv').order_by('category', 'name')
     serializer_class = SkillSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category', 'proficiency_level']
     search_fields = ['name', 'description']
@@ -104,7 +104,7 @@ class SkillViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.select_related('cv').order_by('-is_featured', '-start_date')
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'is_featured']
     search_fields = ['title', 'description', 'technologies_used']
@@ -115,7 +115,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.select_related('cv').filter(is_public=True).order_by('contact_type')
     serializer_class = ContactSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['contact_type', 'is_primary', 'is_public']
     search_fields = ['value']

@@ -1,0 +1,282 @@
+[
+  {
+    "model": "main.cv",
+    "pk": 2,
+    "fields": {
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "bio": "Senior Full-Stack Developer with 7+ years of experience in modern web technologies. Expert in React, Node.js, Python, and cloud platforms. Led multiple successful projects from conception to deployment. Strong background in both frontend and backend development with focus on user experience, performance optimization, and scalable architecture. Passionate about mentoring junior developers and implementing best practices in software development.",
+      "status": "published",
+      "is_active": true,
+      "created_at": "2024-01-16T09:30:00Z",
+      "updated_at": "2024-01-16T09:30:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 6,
+    "fields": {
+      "cv": 2,
+      "name": "JavaScript",
+      "category": "technical",
+      "proficiency_level": 5,
+      "description": "Expert JavaScript developer with ES6+ and modern frameworks",
+      "created_at": "2024-01-16T09:35:00Z",
+      "updated_at": "2024-01-16T09:35:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 7,
+    "fields": {
+      "cv": 2,
+      "name": "Node.js",
+      "category": "technical",
+      "proficiency_level": 4,
+      "description": "Backend development with Node.js and Express",
+      "created_at": "2024-01-16T09:36:00Z",
+      "updated_at": "2024-01-16T09:36:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 11,
+    "fields": {
+      "cv": 2,
+      "name": "React",
+      "category": "technical",
+      "proficiency_level": 5,
+      "description": "Expert React developer with hooks, context, and modern patterns",
+      "created_at": "2024-01-16T09:37:00Z",
+      "updated_at": "2024-01-16T09:37:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 12,
+    "fields": {
+      "cv": 2,
+      "name": "TypeScript",
+      "category": "technical",
+      "proficiency_level": 4,
+      "description": "Strong TypeScript skills for type-safe development",
+      "created_at": "2024-01-16T09:38:00Z",
+      "updated_at": "2024-01-16T09:38:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 13,
+    "fields": {
+      "cv": 2,
+      "name": "Python",
+      "category": "technical",
+      "proficiency_level": 4,
+      "description": "Python development with Django and Flask frameworks",
+      "created_at": "2024-01-16T09:39:00Z",
+      "updated_at": "2024-01-16T09:39:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 14,
+    "fields": {
+      "cv": 2,
+      "name": "AWS",
+      "category": "technical",
+      "proficiency_level": 3,
+      "description": "Cloud deployment and services on Amazon Web Services",
+      "created_at": "2024-01-16T09:40:00Z",
+      "updated_at": "2024-01-16T09:40:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 15,
+    "fields": {
+      "cv": 2,
+      "name": "Project Management",
+      "category": "soft",
+      "proficiency_level": 4,
+      "description": "Agile methodologies and team leadership experience",
+      "created_at": "2024-01-16T09:41:00Z",
+      "updated_at": "2024-01-16T09:41:00Z"
+    }
+  },
+  {
+    "model": "main.skill",
+    "pk": 16,
+    "fields": {
+      "cv": 2,
+      "name": "Mentoring",
+      "category": "soft",
+      "proficiency_level": 5,
+      "description": "Mentoring junior developers and conducting code reviews",
+      "created_at": "2024-01-16T09:42:00Z",
+      "updated_at": "2024-01-16T09:42:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 4,
+    "fields": {
+      "cv": 2,
+      "title": "Social Media Dashboard",
+      "description": "Real-time social media analytics dashboard with data visualization and reporting features.",
+      "status": "completed",
+      "start_date": "2023-03-01",
+      "end_date": "2023-08-30",
+      "technologies_used": "Node.js, React, MongoDB, Chart.js, Socket.io",
+      "project_url": "https://github.com/janesmith/social-dashboard",
+      "is_featured": true,
+      "created_at": "2024-01-16T09:40:00Z",
+      "updated_at": "2024-01-16T09:40:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 5,
+    "fields": {
+      "cv": 2,
+      "title": "Mobile App Backend",
+      "description": "RESTful API backend for mobile application with user management, content delivery, and push notifications.",
+      "status": "completed",
+      "start_date": "2023-09-01",
+      "end_date": "2023-12-15",
+      "technologies_used": "Node.js, Express, MongoDB, Firebase, JWT",
+      "project_url": "https://github.com/janesmith/mobile-backend",
+      "is_featured": false,
+      "created_at": "2024-01-16T09:41:00Z",
+      "updated_at": "2024-01-16T09:41:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 8,
+    "fields": {
+      "cv": 2,
+      "title": "E-learning Platform",
+      "description": "Full-stack e-learning platform with video streaming, quizzes, progress tracking, and instructor dashboard. Built with React frontend and Node.js backend.",
+      "status": "completed",
+      "start_date": "2022-06-01",
+      "end_date": "2023-02-28",
+      "technologies_used": "React, Node.js, MongoDB, AWS S3, Stripe, Socket.io",
+      "project_url": "https://github.com/janesmith/elearning-platform",
+      "is_featured": true,
+      "created_at": "2024-01-16T09:43:00Z",
+      "updated_at": "2024-01-16T09:43:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 9,
+    "fields": {
+      "cv": 2,
+      "title": "Real-time Collaboration Tool",
+      "description": "Real-time collaborative document editor with live editing, comments, and version control. Similar to Google Docs but with advanced features.",
+      "status": "completed",
+      "start_date": "2023-01-15",
+      "end_date": "2023-05-30",
+      "technologies_used": "React, TypeScript, Node.js, WebSockets, Redis, PostgreSQL",
+      "project_url": "https://github.com/janesmith/collaboration-tool",
+      "is_featured": true,
+      "created_at": "2024-01-16T09:44:00Z",
+      "updated_at": "2024-01-16T09:44:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 10,
+    "fields": {
+      "cv": 2,
+      "title": "AI-Powered Analytics Dashboard",
+      "description": "Advanced analytics dashboard with AI-powered insights, predictive analytics, and automated reporting. Integrates with multiple data sources.",
+      "status": "in_progress",
+      "start_date": "2024-01-01",
+      "end_date": null,
+      "technologies_used": "React, Python, Django, TensorFlow, AWS, PostgreSQL",
+      "project_url": "https://github.com/janesmith/ai-analytics",
+      "is_featured": true,
+      "created_at": "2024-01-16T09:45:00Z",
+      "updated_at": "2024-01-16T09:45:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 6,
+    "fields": {
+      "cv": 2,
+      "contact_type": "email",
+      "value": "jane.smith@example.com",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-16T09:45:00Z",
+      "updated_at": "2024-01-16T09:45:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 7,
+    "fields": {
+      "cv": 2,
+      "contact_type": "phone",
+      "value": "+1-555-0456",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-16T09:46:00Z",
+      "updated_at": "2024-01-16T09:46:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 8,
+    "fields": {
+      "cv": 2,
+      "contact_type": "linkedin",
+      "value": "https://linkedin.com/in/janesmith",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-16T09:47:00Z",
+      "updated_at": "2024-01-16T09:47:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 9,
+    "fields": {
+      "cv": 2,
+      "contact_type": "github",
+      "value": "https://github.com/janesmith",
+      "is_primary": true,
+      "is_public": true,
+      "created_at": "2024-01-16T09:48:00Z",
+      "updated_at": "2024-01-16T09:48:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 14,
+    "fields": {
+      "cv": 2,
+      "contact_type": "website",
+      "value": "https://janesmith.dev",
+      "is_primary": false,
+      "is_public": true,
+      "created_at": "2024-01-16T09:49:00Z",
+      "updated_at": "2024-01-16T09:49:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 15,
+    "fields": {
+      "cv": 2,
+      "contact_type": "twitter",
+      "value": "https://twitter.com/janesmith_dev",
+      "is_primary": false,
+      "is_public": true,
+      "created_at": "2024-01-16T09:50:00Z",
+      "updated_at": "2024-01-16T09:50:00Z"
+    }
+  }
+]

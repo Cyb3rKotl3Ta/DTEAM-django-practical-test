@@ -1,13 +1,18 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, BinaryIO
+from typing import Dict, Any, BinaryIO, Optional
 from django.http import HttpResponse
-from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from reportlab.lib.enums import TA_CENTER
+import logging
 from ..models import CV
+from .translation_service import get_translation_service
+from ..utils.cv_data_utils import prepare_cv_data
+
+logger = logging.getLogger(__name__)
 
 
 class PDFGenerator(ABC):
@@ -60,29 +65,53 @@ class CVPDFGenerator(PDFGenerator):
             textColor=colors.darkgreen
         ))
 
-    def generate(self, cv: CV) -> BinaryIO:
+    def generate(self, cv: CV, language: Optional[str] = None) -> BinaryIO:
         buffer = HttpResponse(content_type='application/pdf')
-        buffer['Content-Disposition'] = f'attachment; filename="{cv.full_name.replace(" ", "_")}_CV.pdf"'
+
+        # Prepare CV data for potential translation
+        cv_data = prepare_cv_data(cv)
+        translated_data = None
+
+        if language:
+            try:
+                translation_service = get_translation_service()
+                translated_data = translation_service.translate_cv_content(cv_data, language)
+            except Exception as e:
+                logger.warning(f"Translation failed for language {language}: {e}")
+                translated_data = None
+
+        filename = f"{cv.full_name.replace(' ', '_')}_CV"
+        if language:
+            filename += f"_{language}"
+        filename += ".pdf"
+
+        buffer['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         doc = SimpleDocTemplate(buffer, pagesize=self.page_size)
         story = []
 
-        story.extend(self._build_header(cv))
-        story.extend(self._build_contact_info(cv))
-        story.extend(self._build_bio(cv))
-        story.extend(self._build_skills(cv))
-        story.extend(self._build_projects(cv))
+        story.extend(self._build_header(cv, translated_data))
+        story.extend(self._build_contact_info(cv, translated_data))
+        story.extend(self._build_bio(cv, translated_data))
+        story.extend(self._build_skills(cv, translated_data))
+        story.extend(self._build_projects(cv, translated_data))
 
         doc.build(story)
         return buffer
 
-    def _build_header(self, cv: CV) -> list:
+
+    def _build_header(self, cv: CV, translated_data: Optional[Dict] = None) -> list:
+        if translated_data and translated_data.get('first_name') and translated_data.get('last_name'):
+            full_name = f"{translated_data['first_name']} {translated_data['last_name']}"
+        else:
+            full_name = cv.full_name
+
         return [
-            Paragraph(cv.full_name, self.styles['CVTitle']),
+            Paragraph(full_name, self.styles['CVTitle']),
             Spacer(1, 12)
         ]
 
-    def _build_contact_info(self, cv: CV) -> list:
+    def _build_contact_info(self, cv: CV, translated_data: Optional[Dict] = None) -> list:
         contacts = cv.contacts.filter(is_public=True)
         if not contacts.exists():
             return []
@@ -108,17 +137,18 @@ class CVPDFGenerator(PDFGenerator):
             Spacer(1, 12)
         ]
 
-    def _build_bio(self, cv: CV) -> list:
-        if not cv.bio:
+    def _build_bio(self, cv: CV, translated_data: Optional[Dict] = None) -> list:
+        bio_text = translated_data.get('bio') if translated_data else cv.bio
+        if not bio_text:
             return []
 
         return [
             Paragraph("Professional Summary", self.styles['SectionHeader']),
-            Paragraph(cv.bio, self.styles['Normal']),
+            Paragraph(bio_text, self.styles['Normal']),
             Spacer(1, 12)
         ]
 
-    def _build_skills(self, cv: CV) -> list:
+    def _build_skills(self, cv: CV, translated_data: Optional[Dict] = None) -> list:
         skills = cv.skills.all()
         if not skills.exists():
             return []
@@ -144,7 +174,7 @@ class CVPDFGenerator(PDFGenerator):
         story.append(Spacer(1, 12))
         return story
 
-    def _build_projects(self, cv: CV) -> list:
+    def _build_projects(self, cv: CV, translated_data: Optional[Dict] = None) -> list:
         projects = cv.projects.all()
         if not projects.exists():
             return []
@@ -180,21 +210,39 @@ class PDFService:
     def __init__(self, generator: PDFGenerator = None):
         self.generator = generator or CVPDFGenerator()
 
-    def generate_cv_pdf(self, cv: CV) -> HttpResponse:
-        return self.generator.generate(cv)
+    def generate_cv_pdf(self, cv: CV, language: Optional[str] = None) -> HttpResponse:
+        return self.generator.generate(cv, language)
 
-    def generate_cv_pdf_inline(self, cv: CV) -> HttpResponse:
+    def generate_cv_pdf_inline(self, cv: CV, language: Optional[str] = None) -> HttpResponse:
         buffer = HttpResponse(content_type='application/pdf')
-        buffer['Content-Disposition'] = f'inline; filename="{cv.full_name.replace(" ", "_")}_CV.pdf"'
+
+        # Prepare CV data for potential translation
+        cv_data = prepare_cv_data(cv)
+        translated_data = None
+
+        if language:
+            try:
+                translation_service = get_translation_service()
+                translated_data = translation_service.translate_cv_content(cv_data, language)
+            except Exception as e:
+                logger.warning(f"Translation failed for language {language}: {e}")
+                translated_data = None
+
+        filename = f"{cv.full_name.replace(' ', '_')}_CV"
+        if language:
+            filename += f"_{language}"
+        filename += ".pdf"
+
+        buffer['Content-Disposition'] = f'inline; filename="{filename}"'
 
         doc = SimpleDocTemplate(buffer, pagesize=A4)
         story = []
 
-        story.extend(self.generator._build_header(cv))
-        story.extend(self.generator._build_contact_info(cv))
-        story.extend(self.generator._build_bio(cv))
-        story.extend(self.generator._build_skills(cv))
-        story.extend(self.generator._build_projects(cv))
+        story.extend(self.generator._build_header(cv, translated_data))
+        story.extend(self.generator._build_contact_info(cv, translated_data))
+        story.extend(self.generator._build_bio(cv, translated_data))
+        story.extend(self.generator._build_skills(cv, translated_data))
+        story.extend(self.generator._build_projects(cv, translated_data))
 
         doc.build(story)
         return buffer

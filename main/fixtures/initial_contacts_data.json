@@ -118,6 +118,32 @@
   },
   {
     "model": "main.contact",
+    "pk": 14,
+    "fields": {
+      "cv": 2,
+      "contact_type": "website",
+      "value": "https://janesmith.dev",
+      "is_primary": false,
+      "is_public": true,
+      "created_at": "2024-01-16T09:49:00Z",
+      "updated_at": "2024-01-16T09:49:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
+    "pk": 15,
+    "fields": {
+      "cv": 2,
+      "contact_type": "twitter",
+      "value": "https://twitter.com/janesmith_dev",
+      "is_primary": false,
+      "is_public": true,
+      "created_at": "2024-01-16T09:50:00Z",
+      "updated_at": "2024-01-16T09:50:00Z"
+    }
+  },
+  {
+    "model": "main.contact",
     "pk": 10,
     "fields": {
       "cv": 3,

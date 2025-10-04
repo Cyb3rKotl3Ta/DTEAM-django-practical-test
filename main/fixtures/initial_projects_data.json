@@ -86,6 +86,57 @@
   },
   {
     "model": "main.project",
+    "pk": 8,
+    "fields": {
+      "cv": 2,
+      "title": "E-learning Platform",
+      "description": "Full-stack e-learning platform with video streaming, quizzes, progress tracking, and instructor dashboard. Built with React frontend and Node.js backend.",
+      "status": "completed",
+      "start_date": "2022-06-01",
+      "end_date": "2023-02-28",
+      "technologies_used": "React, Node.js, MongoDB, AWS S3, Stripe, Socket.io",
+      "project_url": "https://github.com/janesmith/elearning-platform",
+      "is_featured": true,
+      "created_at": "2024-01-16T09:43:00Z",
+      "updated_at": "2024-01-16T09:43:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 9,
+    "fields": {
+      "cv": 2,
+      "title": "Real-time Collaboration Tool",
+      "description": "Real-time collaborative document editor with live editing, comments, and version control. Similar to Google Docs but with advanced features.",
+      "status": "completed",
+      "start_date": "2023-01-15",
+      "end_date": "2023-05-30",
+      "technologies_used": "React, TypeScript, Node.js, WebSockets, Redis, PostgreSQL",
+      "project_url": "https://github.com/janesmith/collaboration-tool",
+      "is_featured": true,
+      "created_at": "2024-01-16T09:44:00Z",
+      "updated_at": "2024-01-16T09:44:00Z"
+    }
+  },
+  {
+    "model": "main.project",
+    "pk": 10,
+    "fields": {
+      "cv": 2,
+      "title": "AI-Powered Analytics Dashboard",
+      "description": "Advanced analytics dashboard with AI-powered insights, predictive analytics, and automated reporting. Integrates with multiple data sources.",
+      "status": "in_progress",
+      "start_date": "2024-01-01",
+      "end_date": null,
+      "technologies_used": "React, Python, Django, TensorFlow, AWS, PostgreSQL",
+      "project_url": "https://github.com/janesmith/ai-analytics",
+      "is_featured": true,
+      "created_at": "2024-01-16T09:45:00Z",
+      "updated_at": "2024-01-16T09:45:00Z"
+    }
+  },
+  {
+    "model": "main.project",
     "pk": 6,
     "fields": {
       "cv": 3,

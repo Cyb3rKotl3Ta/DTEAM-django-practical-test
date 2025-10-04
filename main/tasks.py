@@ -1,8 +1,9 @@
 from celery import shared_task
-from django.core.mail import EmailMessage
 from django.conf import settings
 from .services.pdf_service import PDFService
+from .services.email_service import get_email_service
 from .models import CV
+from .utils.cv_data_utils import prepare_cv_data
 import logging
 
 logger = logging.getLogger(__name__)
@@ -11,40 +12,29 @@ logger = logging.getLogger(__name__)
 def send_cv_pdf_email(self, cv_id, recipient_email, sender_name=None):
     try:
         cv = CV.objects.get(id=cv_id)
+
+        # Prepare CV data
+        cv_data = prepare_cv_data(cv)
+
+        # Generate PDF
         pdf_service = PDFService()
         pdf_buffer = pdf_service.generator.generate(cv)
+        pdf_content = pdf_buffer.getvalue()
 
-        subject = f"CV of {cv.first_name} {cv.last_name}"
-        message = f"""
-Hello,
-
-Please find attached the CV of {cv.first_name} {cv.last_name}.
-
-Best regards,
-{sender_name or 'CV Project Team'}
-        """.strip()
-
-        email = EmailMessage(
-            subject=subject,
-            body=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[recipient_email],
+        # Send email using EmailService
+        email_service = get_email_service()
+        result = email_service.send_cv_pdf_email(
+            cv_data=cv_data,
+            recipient_email=recipient_email,
+            sender_name=sender_name,
+            pdf_content=pdf_content
         )
 
-        email.attach(
-            filename=f"{cv.first_name}_{cv.last_name}_CV.pdf",
-            content=pdf_buffer.getvalue(),
-            mimetype='application/pdf'
-        )
+        if result['status'] == 'success':
+            logger.info(f"CV PDF sent successfully to {recipient_email} for CV {cv_id}")
+            result['cv_name'] = f"{cv.first_name} {cv.last_name}"
 
-        email.send()
-        logger.info(f"CV PDF sent successfully to {recipient_email} for CV {cv_id}")
-
-        return {
-            'status': 'success',
-            'message': f'CV PDF sent successfully to {recipient_email}',
-            'cv_name': f"{cv.first_name} {cv.last_name}"
-        }
+        return result
 
     except CV.DoesNotExist:
         error_msg = f"CV with ID {cv_id} not found"

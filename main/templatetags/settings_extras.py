@@ -2,6 +2,7 @@ from django import template
 
 register = template.Library()
 
+<<<<<<< Updated upstream
 
 @register.filter
 def lookup(dictionary, key):
@@ -62,3 +63,14 @@ def format_setting_value(value):
         return f"{value[:100]}..."
     else:
         return str(value)
+=======
+@register.filter
+def lookup(dictionary, key):
+    if isinstance(dictionary, dict):
+        return dictionary.get(key, '')
+    return ''
+
+@register.filter
+def get_setting(key):
+    return getattr(settings, key, '')
+>>>>>>> Stashed changes

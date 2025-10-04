@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+
+{% block title %}API Logs - Audit Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-6">
+                    <i class="fas fa-code text-primary me-3"></i>API Logs
+                </h1>
+                <div>
+                    <a href="{% url 'audit:audit_home' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <button class="btn btn-primary" onclick="refreshLogs()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-filter me-2"></i>Filters
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="searchInput" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search logs...">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="methodFilter" class="form-label">Method</label>
+                            <select class="form-select" id="methodFilter">
+                                <option value="">All Methods</option>
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="statusFilter" class="form-label">Status</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="200">200 (Success)</option>
+                                <option value="300">300+ (Redirect)</option>
+                                <option value="400">400+ (Client Error)</option>
+                                <option value="500">500+ (Server Error)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="limitSelect" class="form-label">Limit</label>
+                            <select class="form-select" id="limitSelect">
+                                <option value="10">10</option>
+                                <option value="25" selected>25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-success w-100" onclick="applyFilters()">
+                                <i class="fas fa-search me-2"></i>Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Response -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-database me-2"></i>API Response
+                    </h5>
+                    <div>
+                        <span class="badge bg-light text-dark" id="totalCount">Loading...</span>
+                        <button class="btn btn-sm btn-outline-light ms-2" onclick="copyToClipboard()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="loadingSpinner" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3 text-muted">Loading API logs...</p>
+                    </div>
+                    <div id="apiResponse" style="display: none;">
+                        <pre id="jsonResponse" class="bg-light p-3 rounded" style="max-height: 600px; overflow-y: auto;"></pre>
+                    </div>
+                    <div id="errorMessage" class="alert alert-danger" style="display: none;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span id="errorText"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Raw Data Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-table me-2"></i>Raw Data Table
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="logsTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Method</th>
+                                    <th>Path</th>
+                                    <th>Status</th>
+                                    <th>Response Time</th>
+                                    <th>User</th>
+                                    <th>IP</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <tr>
+                                    <td colspan="9" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mt-2 text-muted">Loading logs...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentFilters = {
+    search: '',
+    method: '',
+    status: '',
+    limit: 25,
+    offset: 0
+};
+
+function refreshLogs() {
+    loadApiLogs();
+}
+
+function applyFilters() {
+    currentFilters.search = document.getElementById('searchInput').value;
+    currentFilters.method = document.getElementById('methodFilter').value;
+    currentFilters.status = document.getElementById('statusFilter').value;
+    currentFilters.limit = parseInt(document.getElementById('limitSelect').value);
+    currentFilters.offset = 0;
+
+    loadApiLogs();
+}
+
+function loadApiLogs() {
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const apiResponse = document.getElementById('apiResponse');
+    const errorMessage = document.getElementById('errorMessage');
+    const logsTableBody = document.getElementById('logsTableBody');
+
+    loadingSpinner.style.display = 'block';
+    apiResponse.style.display = 'none';
+    errorMessage.style.display = 'none';
+
+    const params = new URLSearchParams();
+    if (currentFilters.search) params.append('search', currentFilters.search);
+    if (currentFilters.method) params.append('method', currentFilters.method);
+    if (currentFilters.status) params.append('status', currentFilters.status);
+    if (currentFilters.limit) params.append('limit', currentFilters.limit);
+    if (currentFilters.offset) params.append('offset', currentFilters.offset);
+
+    fetch(`/audit/api/logs/?${params.toString()}`)
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            apiResponse.style.display = 'block';
+
+            document.getElementById('jsonResponse').textContent = JSON.stringify(data, null, 2);
+            document.getElementById('totalCount').textContent = `${data.logs ? data.logs.length : 0} logs`;
+
+            updateTable(data.logs || []);
+        })
+        .catch(error => {
+            loadingSpinner.style.display = 'none';
+            errorMessage.style.display = 'block';
+            document.getElementById('errorText').textContent = `Error loading logs: ${error.message}`;
+        });
+}
+
+function updateTable(logs) {
+    const tbody = document.getElementById('logsTableBody');
+    tbody.innerHTML = '';
+
+    if (logs.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" class="text-center py-4 text-muted">
+                    <i class="fas fa-inbox fa-2x mb-3"></i>
+                    <p>No logs found</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    logs.forEach(log => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${log.id}</td>
+            <td><small>${new Date(log.timestamp).toLocaleString()}</small></td>
+            <td><span class="badge bg-${getMethodColor(log.http_method)}">${log.http_method}</span></td>
+            <td><code class="text-truncate" style="max-width: 200px;" title="${log.path}">${log.path}</code></td>
+            <td><span class="badge bg-${getStatusColor(log.response_status)}">${log.response_status}</span></td>
+            <td><span class="badge bg-${getTimeColor(log.response_time_ms)}">${log.response_time_ms}ms</span></td>
+            <td>${log.user ? log.user.username : '<span class="text-muted">Anonymous</span>'}</td>
+            <td><small>${log.remote_ip}</small></td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="showLogDetails(${log.id})">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function getMethodColor(method) {
+    switch(method) {
+        case 'GET': return 'primary';
+        case 'POST': return 'success';
+        case 'PUT': return 'warning';
+        case 'DELETE': return 'danger';
+        default: return 'secondary';
+    }
+}
+
+function getStatusColor(status) {
+    if (status < 300) return 'success';
+    if (status < 400) return 'info';
+    if (status < 500) return 'warning';
+    return 'danger';
+}
+
+function getTimeColor(time) {
+    if (time < 100) return 'success';
+    if (time < 500) return 'warning';
+    return 'danger';
+}
+
+function showLogDetails(logId) {
+    fetch(`/audit/api/logs/${logId}/`)
+        .then(response => response.json())
+        .then(data => {
+            alert(`Log Details:\n\n${JSON.stringify(data, null, 2)}`);
+        })
+        .catch(error => {
+            alert(`Error loading log details: ${error.message}`);
+        });
+}
+
+function copyToClipboard() {
+    const jsonText = document.getElementById('jsonResponse').textContent;
+    navigator.clipboard.writeText(jsonText).then(() => {
+        const btn = event.target.closest('button');
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        btn.classList.add('btn-success');
+        btn.classList.remove('btn-outline-light');
+
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-light');
+        }, 2000);
+    });
+}
+
+// Load logs on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadApiLogs();
+});
+</script>
+{% endblock %}

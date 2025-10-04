@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 from .models import CV, Skill, Project, Contact
-from .constants import CV_STATUS_CHOICES, SKILL_CATEGORIES, PROJECT_STATUS_CHOICES, CONTACT_TYPES
+from .constants.choices import CV_STATUS_CHOICES, SKILL_CATEGORIES, PROJECT_STATUS_CHOICES, CONTACT_TYPES
 
 
 class CVViewsTestCase(TestCase):

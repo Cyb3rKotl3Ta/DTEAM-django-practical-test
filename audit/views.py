@@ -12,6 +12,24 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import RequestLog
 
 
+@login_required
+def audit_home_view(request):
+    """Home page for audit app."""
+    return render(request, 'audit/audit_home.html')
+
+
+@login_required
+def api_logs_page_view(request):
+    """API logs page view."""
+    return render(request, 'audit/api_logs.html')
+
+
+@login_required
+def statistics_page_view(request):
+    """Statistics page view."""
+    return render(request, 'audit/statistics.html')
+
+
 class RecentRequestsView(LoginRequiredMixin, ListView):
     model = RequestLog
     template_name = 'audit/recent_requests.html'
@@ -71,14 +89,13 @@ class RecentRequestsView(LoginRequiredMixin, ListView):
         return context
 
 
+@login_required
 @require_http_methods(["GET"])
 @cache_page(60 * 5)  # Cache for 5 minutes
 def logs_api_view(request):
     """
     API endpoint for recent requests data
     """
-    if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Authentication required'}, status=401)
 
     limit = min(int(request.GET.get('limit', 10)), 100)  # Max 100 records
     offset = int(request.GET.get('offset', 0))
@@ -141,14 +158,13 @@ def logs_api_view(request):
     return JsonResponse(data)
 
 
+@login_required
 @require_http_methods(["GET"])
 @cache_page(60 * 10)  # Cache for 10 minutes
 def logs_stats_view(request):
     """
     API endpoint for logging statistics
     """
-    if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Authentication required'}, status=401)
 
     stats = RequestLog.objects.get_stats()
 
@@ -161,3 +177,39 @@ def logs_stats_view(request):
     })
 
     return JsonResponse(stats)
+
+
+@login_required
+@require_http_methods(["GET"])
+def log_detail_view(request, log_id):
+    """
+    API endpoint for individual log details
+    """
+
+    try:
+        log = RequestLog.objects.get(id=log_id)
+        data = {
+            'id': log.id,
+            'timestamp': log.timestamp.isoformat(),
+            'http_method': log.http_method,
+            'path': log.path,
+            'query_string': log.query_string,
+            'remote_ip': log.remote_ip,
+            'user_agent': log.user_agent,
+            'user': {
+                'id': log.user.id,
+                'username': log.user.username,
+            } if log.user else None,
+            'response_status': log.response_status,
+            'response_time_ms': log.response_time_ms,
+            'request_size_bytes': log.request_size_bytes,
+            'response_size_bytes': log.response_size_bytes,
+            'is_authenticated': log.is_authenticated,
+            'is_staff': log.is_staff,
+            'is_superuser': log.is_superuser,
+        }
+        return JsonResponse(data)
+    except RequestLog.DoesNotExist:
+        return JsonResponse({'error': 'Log not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

@@ -305,14 +305,37 @@
                                 <i class="fas fa-file-pdf me-2"></i>PDF Export
                             </h5>
                         </div>
-                        <div class="card-body text-center">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="pdfLanguageSelector" class="form-label">Select language for PDF:</label>
+                                <select class="form-select" id="pdfLanguageSelector">
+                                    <option value="">Original (English)</option>
+                                    <option value="cornish">Cornish (Kernewek)</option>
+                                    <option value="manx">Manx (Gaelg)</option>
+                                    <option value="breton">Breton (Brezhoneg)</option>
+                                    <option value="inuktitut">Inuktitut (ᐃᓄᒃᑎᑐᑦ)</option>
+                                    <option value="kalallisut">Kalallisut (Kalaallisut)</option>
+                                    <option value="romani">Romani</option>
+                                    <option value="occitan">Occitan</option>
+                                    <option value="ladino">Ladino</option>
+                                    <option value="northern_sami">Northern Sami (Davvisámegiella)</option>
+                                    <option value="upper_sorbian">Upper Sorbian (Hornjoserbšćina)</option>
+                                    <option value="kashubian">Kashubian (Kaszëbsczi)</option>
+                                    <option value="zazaki">Zazaki</option>
+                                    <option value="chuvash">Chuvash (Чӑваш)</option>
+                                    <option value="livonian">Livonian (Līvõ kēļ)</option>
+                                    <option value="tsakonian">Tsakonian (Τσακώνικα)</option>
+                                    <option value="saramaccan">Saramaccan</option>
+                                    <option value="bislama">Bislama</option>
+                                </select>
+                            </div>
                             <div class="d-grid gap-2">
-                                <a href="{% url 'main:cv_pdf_view' cv.id %}" class="btn btn-outline-primary" target="_blank">
+                                <button type="button" class="btn btn-outline-primary" id="viewPdfBtn">
                                     <i class="fas fa-eye me-2"></i>View PDF
-                                </a>
-                                <a href="{% url 'main:cv_pdf_download' cv.id %}" class="btn btn-primary">
+                                </button>
+                                <button type="button" class="btn btn-primary" id="downloadPdfBtn">
                                     <i class="fas fa-download me-2"></i>Download PDF
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -374,6 +397,18 @@
         const sendEmailBtn = document.getElementById('sendEmailBtn');
         const emailStatus = document.getElementById('emailStatus');
 
+<<<<<<< Updated upstream
+=======
+        const pdfLanguageSelector = document.getElementById('pdfLanguageSelector');
+        const viewPdfBtn = document.getElementById('viewPdfBtn');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+
+        const languageSelector = document.getElementById('languageSelector');
+        const translateBtn = document.getElementById('translateBtn');
+        const translationStatus = document.getElementById('translationStatus');
+
+
+>>>>>>> Stashed changes
         if (emailForm) {
             emailForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -393,12 +428,14 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        emailStatus.innerHTML = `
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="fas fa-check-circle me-2"></i>${data.message}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        `;
+                        if (data.message) {
+                            emailStatus.innerHTML = `
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>${data.message}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            `;
+                        }
                         emailForm.reset();
                     } else {
                         emailStatus.innerHTML = `
@@ -425,6 +462,135 @@
                 });
             });
         }
+<<<<<<< Updated upstream
+=======
+
+        // PDF buttons functionality
+        if (viewPdfBtn && downloadPdfBtn && pdfLanguageSelector) {
+            viewPdfBtn.addEventListener('click', function() {
+                const language = pdfLanguageSelector.value;
+                let url = "{% url 'main:cv_pdf_view' cv.id %}";
+                if (language) {
+                    url += `?language=${encodeURIComponent(language)}`;
+                }
+                window.open(url, '_blank');
+            });
+
+            downloadPdfBtn.addEventListener('click', function() {
+                const language = pdfLanguageSelector.value;
+                let url = "{% url 'main:cv_pdf_download' cv.id %}";
+                if (language) {
+                    url += `?language=${encodeURIComponent(language)}`;
+                }
+                window.location.href = url;
+            });
+        }
+
+        // Translation functionality
+        if (languageSelector && translateBtn) {
+            languageSelector.addEventListener('change', function() {
+                translateBtn.disabled = !this.value;
+            });
+
+            translateBtn.addEventListener('click', function() {
+                const selectedLanguage = languageSelector.value;
+                if (!selectedLanguage) return;
+
+                translateBtn.disabled = true;
+                translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Translating...';
+
+                const formData = new FormData();
+                formData.append('language', selectedLanguage);
+
+                fetch(`{% url 'main:translate_cv' cv.id %}`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        translationStatus.innerHTML = `
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>${data.message}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        `;
+                        updateCVContent(data.translated_data, data.language_name);
+                    } else {
+                        translationStatus.innerHTML = `
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>${data.message}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        `;
+                    }
+                    translationStatus.style.display = 'block';
+                })
+                .catch(error => {
+                    translationStatus.innerHTML = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>Translation failed. Please try again.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    translationStatus.style.display = 'block';
+                })
+                .finally(() => {
+                    translateBtn.disabled = false;
+                    translateBtn.innerHTML = '<i class="fas fa-language me-2"></i>Translate';
+                });
+            });
+        }
+
+        function updateCVContent(translatedData, languageName) {
+            const nameElement = document.querySelector('.cv-name');
+            if (nameElement && translatedData.first_name && translatedData.last_name) {
+                nameElement.textContent = `${translatedData.first_name} ${translatedData.last_name}`;
+            }
+
+            const bioElement = document.querySelector('.cv-bio');
+            if (bioElement && translatedData.bio) {
+                bioElement.textContent = translatedData.bio;
+            }
+
+            if (translatedData.skills) {
+                translatedData.skills.forEach((skill, index) => {
+                    const skillElements = document.querySelectorAll('.skill-name');
+                    if (skillElements[index] && skill.name) {
+                        skillElements[index].textContent = skill.name;
+                    }
+                });
+            }
+
+            if (translatedData.projects) {
+                translatedData.projects.forEach((project, index) => {
+                    const projectElements = document.querySelectorAll('.project-title');
+                    if (projectElements[index] && project.title) {
+                        projectElements[index].textContent = project.title;
+                    }
+                });
+            }
+
+            const languageIndicator = document.createElement('div');
+            languageIndicator.className = 'alert alert-info mt-3';
+            languageIndicator.innerHTML = `
+                <i class="fas fa-language me-2"></i>
+                <strong>Translated to ${languageName}</strong>
+                <button type="button" class="btn btn-sm btn-outline-info ms-2" onclick="location.reload()">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </button>
+            `;
+
+            const cvContent = document.querySelector('.cv-content');
+            if (cvContent) {
+                cvContent.insertBefore(languageIndicator, cvContent.firstChild);
+            }
+        }
+
+>>>>>>> Stashed changes
     });
 </script>
 {% endblock %}

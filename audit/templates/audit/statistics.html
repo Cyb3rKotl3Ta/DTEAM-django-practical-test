@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+
+{% block title %}Statistics - Audit Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-6">
+                    <i class="fas fa-chart-bar text-primary me-3"></i>Statistics
+                </h1>
+                <div>
+                    <a href="{% url 'audit:audit_home' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <button class="btn btn-primary" onclick="refreshStats()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4" id="summaryCards">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-globe fa-2x mb-2"></i>
+                    <h4 id="totalRequests">-</h4>
+                    <p class="mb-0">Total Requests</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                    <h4 id="successRate">-</h4>
+                    <p class="mb-0">Success Rate</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                    <h4 id="errorRate">-</h4>
+                    <p class="mb-0">Error Rate</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-2x mb-2"></i>
+                    <h4 id="avgResponseTime">-</h4>
+                    <p class="mb-0">Avg Response Time</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>HTTP Methods Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="methodChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Hourly Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="hourlyChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Tables -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Top Paths
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Path</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topPathsTable">
+                                <tr>
+                                    <td colspan="3" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-network-wired me-2"></i>Top IPs
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topIpsTable">
+                                <tr>
+                                    <td colspan="3" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Raw API Response -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-code me-2"></i>Raw API Response
+                    </h5>
+                    <button class="btn btn-sm btn-outline-light" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <pre id="jsonResponse" class="bg-light p-3 rounded" style="max-height: 400px; overflow-y: auto;"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let methodChart, hourlyChart;
+
+function refreshStats() {
+    loadStatistics();
+}
+
+function loadStatistics() {
+    fetch('/audit/api/stats/')
+        .then(response => response.json())
+        .then(data => {
+            updateSummaryCards(data);
+            updateCharts(data);
+            updateTables(data);
+            updateRawResponse(data);
+        })
+        .catch(error => {
+            console.error('Error loading statistics:', error);
+            alert('Error loading statistics: ' + error.message);
+        });
+}
+
+function updateSummaryCards(data) {
+    document.getElementById('totalRequests').textContent = data.total_requests || 0;
+    document.getElementById('successRate').textContent = (data.success_rate || 0).toFixed(1) + '%';
+    document.getElementById('errorRate').textContent = (data.error_rate || 0).toFixed(1) + '%';
+    document.getElementById('avgResponseTime').textContent = (data.avg_response_time || 0).toFixed(0) + 'ms';
+}
+
+function updateCharts(data) {
+    // Method Distribution Chart
+    const methodCtx = document.getElementById('methodChart').getContext('2d');
+    if (methodChart) methodChart.destroy();
+
+    methodChart = new Chart(methodCtx, {
+        type: 'doughnut',
+        data: {
+            labels: data.method_distribution?.map(item => item.http_method) || [],
+            datasets: [{
+                data: data.method_distribution?.map(item => item.count) || [],
+                backgroundColor: [
+                    '#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Hourly Distribution Chart
+    const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+    if (hourlyChart) hourlyChart.destroy();
+
+    hourlyChart = new Chart(hourlyCtx, {
+        type: 'line',
+        data: {
+            labels: data.hourly_distribution?.map(item => item.hour + ':00') || [],
+            datasets: [{
+                label: 'Requests per Hour',
+                data: data.hourly_distribution?.map(item => item.count) || [],
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function updateTables(data) {
+    // Top Paths Table
+    const topPathsTable = document.getElementById('topPathsTable');
+    topPathsTable.innerHTML = '';
+
+    if (data.top_paths && data.top_paths.length > 0) {
+        const totalRequests = data.total_requests || 1;
+        data.top_paths.forEach(path => {
+            const percentage = ((path.count / totalRequests) * 100).toFixed(1);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><code>${path.path}</code></td>
+                <td><span class="badge bg-primary">${path.count}</span></td>
+                <td>${percentage}%</td>
+            `;
+            topPathsTable.appendChild(row);
+        });
+    } else {
+        topPathsTable.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No data available</td></tr>';
+    }
+
+    // Top IPs Table
+    const topIpsTable = document.getElementById('topIpsTable');
+    topIpsTable.innerHTML = '';
+
+    if (data.top_ips && data.top_ips.length > 0) {
+        const totalRequests = data.total_requests || 1;
+        data.top_ips.forEach(ip => {
+            const percentage = ((ip.count / totalRequests) * 100).toFixed(1);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><code>${ip.remote_ip}</code></td>
+                <td><span class="badge bg-info">${ip.count}</span></td>
+                <td>${percentage}%</td>
+            `;
+            topIpsTable.appendChild(row);
+        });
+    } else {
+        topIpsTable.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No data available</td></tr>';
+    }
+}
+
+function updateRawResponse(data) {
+    document.getElementById('jsonResponse').textContent = JSON.stringify(data, null, 2);
+}
+
+function copyToClipboard() {
+    const jsonText = document.getElementById('jsonResponse').textContent;
+    navigator.clipboard.writeText(jsonText).then(() => {
+        const btn = event.target.closest('button');
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        btn.classList.add('btn-success');
+        btn.classList.remove('btn-outline-light');
+
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-light');
+        }, 2000);
+    });
+}
+
+// Load statistics on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadStatistics();
+});
+</script>
+{% endblock %}

@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MinLengthValidator, EmailValidator
 from django.utils import timezone
-from .constants import CV_STATUS_CHOICES, SKILL_CATEGORIES, PROJECT_STATUS_CHOICES, CONTACT_TYPES
+from .constants.choices import CV_STATUS_CHOICES, SKILL_CATEGORIES, PROJECT_STATUS_CHOICES, CONTACT_TYPES
 from .managers.cv_manager import CVManager, SkillManager, ProjectManager, ContactManager
 
 
